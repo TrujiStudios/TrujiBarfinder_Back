@@ -1,5 +1,5 @@
 import { CreateCompanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
-import { createCompanyRepository, getCompaniesRepository } from '../../repositories/authRepositories';
+import { createCompanyRepository } from '../../repositories/authRepositories';
 import { findCompanyByEmailRepository } from '../../repositories/companyRepositories';
 
 
@@ -35,14 +35,7 @@ const createCompanyService = async (companyData: CreateCompanyDTO): Promise<Comp
     }
 }
 
-export const getCompaniesService = async (): Promise<{ companies: CompanyResponseDTO[], count: number }> => {
-    try {
-        const companies = await getCompaniesRepository();
-        return companies;
-    } catch (error: unknown) {
-        throw new Error('Error getting companies: ' + (error as Error).message);
-    }
-}
+
 
 
 
