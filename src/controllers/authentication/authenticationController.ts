@@ -8,11 +8,6 @@ import createCompanyService from '../../services/authentication/autenticationSer
 export const createCompanyContoller = async (req: Request, res: Response): Promise<Response> => {
     const companyData: CreateComanyDTO = req.body;
 
-    // const { error } = createCompanySchema.validate(companyData);
-    // if (error) {
-    //     return res.status(400).json({ message: error.details[0].message });
-    // }
-
     try {
         const newCompany = await createCompanyService(companyData);
         return res.status(201).json(newCompany);
