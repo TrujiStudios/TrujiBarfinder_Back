@@ -1,5 +1,6 @@
 import { CreateCompanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
 import { createCompanyRepository, getCompaniesRepository } from '../../repositories/authRepositories';
+import { findCompanyByEmailRepository } from '../../repositories/companyRepositories';
 
 
 
@@ -7,8 +8,10 @@ const createCompanyService = async (companyData: CreateCompanyDTO): Promise<Comp
 
     try {
 
-        // Validación de negocio: Verificar si ya existe una compañía con el mismo email
-
+        const existingCompany: boolean = await findCompanyByEmailRepository(companyData.email);
+        if (existingCompany) {
+            throw new Error('Company with this email already exists');
+        }
 
         // Transformar datos antes de guardarlos
         // const transformedData = {
