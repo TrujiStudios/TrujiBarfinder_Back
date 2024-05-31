@@ -1,9 +1,9 @@
-import { CreateComanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
+import { CreateCompanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
 import { createCompanyRepository } from '../../repositories/authRepositories';
 
 
 
-const createCompanyService = async (companyData: CreateComanyDTO): Promise<CompanyResponseDTO> => {
+const createCompanyService = async (companyData: CreateCompanyDTO): Promise<CompanyResponseDTO> => {
 
     try {
 
@@ -11,13 +11,12 @@ const createCompanyService = async (companyData: CreateComanyDTO): Promise<Compa
 
 
         // Transformar datos antes de guardarlos
-        //  const transformedData = {
+        // const transformedData = {
         //     ...companyData,
         //     name: companyData.name.trim(),
         //     email: companyData.email.toLowerCase(),
         // };
-
-        const newCompany = await createCompanyRepository(companyData);
+        let resultsCompany: CompanyResponseDTO = await createCompanyRepository(companyData);
 
         // Registrar la actividad
         // logActivity('Company created', newCompany);
@@ -26,7 +25,7 @@ const createCompanyService = async (companyData: CreateComanyDTO): Promise<Compa
         //  await sendEmail(newCompany.email, 'Company Created', 'Your company has been successfully created.');
 
 
-        return newCompany;
+        return resultsCompany;
 
     } catch (error) {
         throw new Error('Error creating company: ' + (error as Error).message);
