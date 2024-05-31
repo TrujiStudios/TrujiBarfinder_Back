@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 
-import auth from './routes/authenticateRouter';
 import { errorHandler } from './middlewares/errorHandler';
+
+import routes from './routes';
 
 const app = express();
 
@@ -9,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/v1/auth', auth);
+app.use('/api/v1', routes);
 
 
 app.get('/', (_req: Request, res: Response) => {
