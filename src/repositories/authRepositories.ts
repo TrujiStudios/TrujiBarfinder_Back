@@ -13,7 +13,7 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
     const collection = dbInstance.collection<ICompany>('company');
     const resultCompany = await collection.insertOne({
         ...companyData,
-        id: '',
+        status: 'active',
         createdAt: new Date(),
         updatedAt: new Date(),
     });
@@ -32,5 +32,32 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
         // password: companyData.password,
         createdAt: new Date(),
         updatedAt: new Date(),
+    };
+};
+
+
+export const getCompaniesRepository = async (): Promise<{ companies: CompanyResponseDTO[], count: number }> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+    const collection = dbInstance.collection<ICompany>('company');
+    const companies = await collection.find().toArray();
+    const count = await collection.countDocuments();
+    return {
+        count,
+        companies: companies.map((company) => {
+            return {
+                id: company._id.toString(),
+                name: company.name,
+                lastName: company.lastName,
+                phone: company.phone,
+                nameCompany: company.nameCompany,
+                tipoNegocio: company.tipoNegocio,
+                email: company.email,
+                createdAt: company.createdAt,
+                updatedAt: company.updatedAt,
+            };
+        }),
     };
 };

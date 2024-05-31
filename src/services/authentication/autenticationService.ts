@@ -1,5 +1,5 @@
 import { CreateCompanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
-import { createCompanyRepository } from '../../repositories/authRepositories';
+import { createCompanyRepository, getCompaniesRepository } from '../../repositories/authRepositories';
 
 
 
@@ -29,6 +29,15 @@ const createCompanyService = async (companyData: CreateCompanyDTO): Promise<Comp
 
     } catch (error) {
         throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+export const getCompaniesService = async (): Promise<{ companies: CompanyResponseDTO[], count: number }> => {
+    try {
+        const companies = await getCompaniesRepository();
+        return companies;
+    } catch (error: unknown) {
+        throw new Error('Error getting companies: ' + (error as Error).message);
     }
 }
 

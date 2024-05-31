@@ -1,8 +1,9 @@
 
+const enum Status { 'active', 'inactive' }
 
 
 export interface ICompany {
-    id: string;
+    id?: string;
     name: string;
     lastName: string;
     phone: string;
@@ -10,6 +11,7 @@ export interface ICompany {
     tipoNegocio: string;
     email: string;
     password: string;
+    status: Status | string;
     createdAt: Date;
     updatedAt: Date;
 }
