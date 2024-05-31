@@ -1,20 +1,18 @@
 import app from '../app';
-
-
-
-const port = 3000;
-
-
-// app.listen(port, () => {
-//     console.log(`Compañia  "TrujiStudios"`);
-//     console.log(`Server is running on  http://localhost:${port}`);
-// });
+import db from '../config/database';
+import { environment } from '../config/environment';
 
 
 const startServer = () => {
 
-    app.listen(port, () => {
-        console.log(`Server is running on  http://localhost:${port}`);
+    db.then(() => {
+        console.log('Connected to the database');
+    }).catch((error) => {
+        console.error('Error connecting to the database', error);
+    });
+
+    app.listen(environment.port, () => {
+        console.log(`Server is running on  http://localhost:${environment.port}`);
     });
 };
 

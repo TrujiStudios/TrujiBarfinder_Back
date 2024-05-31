@@ -1,7 +1,7 @@
 
 
 // // import { Request, Response } from 'express';
-// // import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '../../interfaces/userInterface';
+// import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '../../interfaces/userInterface';
 // // import * as userService from '../services/userService';
 
 // export const createUser = async (req: Request, res: Response) => {
