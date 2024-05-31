@@ -1,7 +1,7 @@
 
 
 
-export interface CreateComanyDTO {
+export interface CreateCompanyDTO {
     name: string;
     lastName: string;
     phone: string;
@@ -20,6 +20,7 @@ export interface CompanyResponseDTO {
     nameCompany: string;
     tipoNegocio: string;
     email: string;
+    // password: string;
     createdAt: Date;
     updatedAt: Date;
 }
