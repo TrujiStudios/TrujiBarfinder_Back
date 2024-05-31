@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { CreateCompanyDTO } from '../../dtos/companyDTO';
-import createCompanyService from '../../services/authentication/autenticationService';
+import { CreateCompanyDTO, Payload } from '../../dtos/companyDTO';
+import createCompanyService, { authLoginCompanyServices } from '../../services/authentication/autenticationService';
 
 
 
-export const createCompanyContoller = async (req: Request, res: Response): Promise<Response> => {
+export const authSignupCompanyContoller = async (req: Request, res: Response): Promise<Response> => {
     const companyData: CreateCompanyDTO = req.body;
 
     try {
@@ -15,3 +15,18 @@ export const createCompanyContoller = async (req: Request, res: Response): Promi
     }
 };
 
+
+export const authLoginCompanyController = async (_req: Request, res: Response): Promise<Response> => {
+
+    try {
+
+        const companyLogin: Payload = _req.body;
+
+        const { company, token } = await authLoginCompanyServices(companyLogin);
+        return res.status(200).json({ company: company, token });
+
+    } catch (error: unknown) {
+        return res.status(500).json({ message: (error as Error).message });
+
+    }
+};

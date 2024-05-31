@@ -20,7 +20,21 @@ export interface CompanyResponseDTO {
     nameCompany: string;
     tipoNegocio: string;
     email: string;
-    // password: string;
+    password?: string;
     createdAt: Date;
     updatedAt: Date;
+    token?: string;
+    _id?: string;
+}
+
+export interface Payload {
+    id: string | undefined;
+    email: string;
+    password?: string;
+}
+
+
+
+export interface CompanyResponseLoginDTO {
+    email: string;
 }
