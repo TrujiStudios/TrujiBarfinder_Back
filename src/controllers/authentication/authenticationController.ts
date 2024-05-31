@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CreateCompanyDTO } from '../../dtos/companyDTO';
+import { CompanyResponseDTO, CreateCompanyDTO } from '../../dtos/companyDTO';
 import createCompanyService, { getCompaniesService } from '../../services/authentication/autenticationService';
 
 
@@ -15,8 +15,7 @@ export const createCompanyContoller = async (req: Request, res: Response): Promi
     }
 };
 
-//lista de empresas
-export const getCompaniesController = async (_req: Request, res: Response): Promise<Response> => {
+export const getCompaniesController = async (_req: Request, res: Response): Promise<Response<{ companies: CompanyResponseDTO[], count: number }>> => {
     try {
         const companies = await getCompaniesService();
         return res.status(200).json(companies);
