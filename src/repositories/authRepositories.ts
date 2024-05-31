@@ -1,11 +1,11 @@
 
-import { CreateComanyDTO, CompanyResponseDTO } from '../dtos/companyDTO';
+import { CreateCompanyDTO, CompanyResponseDTO } from '../dtos/companyDTO';
 import { Db } from 'mongodb';
 import db from '../config/database';
 import { ICompany } from '../interfaces/companyInterface';
 
 
-export const createCompanyRepository = async (companyData: CreateComanyDTO): Promise<CompanyResponseDTO> => {
+export const createCompanyRepository = async (companyData: CreateCompanyDTO): Promise<CompanyResponseDTO> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
@@ -29,6 +29,7 @@ export const createCompanyRepository = async (companyData: CreateComanyDTO): Pro
         nameCompany: companyData.nameCompany,
         tipoNegocio: companyData.tipoNegocio,
         email: companyData.email,
+        // password: companyData.password,
         createdAt: new Date(),
         updatedAt: new Date(),
     };
