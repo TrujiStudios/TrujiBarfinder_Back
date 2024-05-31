@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { CreateComanyDTO } from '../../dtos/companyDTO';
+import { CreateCompanyDTO } from '../../dtos/companyDTO';
 import createCompanyService from '../../services/authentication/autenticationService';
 
 
 
 export const createCompanyContoller = async (req: Request, res: Response): Promise<Response> => {
-    const companyData: CreateComanyDTO = req.body;
+    const companyData: CreateCompanyDTO = req.body;
 
     try {
         const newCompany = await createCompanyService(companyData);
