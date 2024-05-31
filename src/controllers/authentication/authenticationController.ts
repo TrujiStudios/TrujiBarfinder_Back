@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { CreateComanyDTO } from '../../dtos/companyDTO';
 import createCompanyService from '../../services/authentication/autenticationService';
-// import { createCompanySchema } from '../../utils/validation/companyValidation';
 
 
 
