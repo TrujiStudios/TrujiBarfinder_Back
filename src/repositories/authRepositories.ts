@@ -1,8 +1,7 @@
 
 import { CreateComanyDTO, CompanyResponseDTO } from '../dtos/companyDTO';
-
-import db from '../config/database';
 import { Db } from 'mongodb';
+import db from '../config/database';
 import { ICompany } from '../interfaces/companyInterface';
 
 
