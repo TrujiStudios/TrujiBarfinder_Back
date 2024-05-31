@@ -1,11 +1,15 @@
 import Joi from 'joi';
 
 export const createCompanySchema = Joi.object({
-    name: Joi.string().required(),
-    lastName: Joi.string().required(),
-    phone: Joi.string().required(),
-    nameCompany: Joi.string().required(),
-    tipoNegocio: Joi.string().required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    //para name que no sea menor a 3 caracteres y no mayor a 30 y no espacios en blanco
+    name: Joi.string().trim().min(3).max(30).required(),
+    lastName: Joi.string().required().trim(),
+    phone: Joi.string().required().trim(),
+    nameCompany: Joi.string().required().trim(),
+    tipoNegocio: Joi.string().required().trim(),
+    email: Joi.string().email().required().trim().lowercase(),
+    password: Joi.string().required().trim(),
 });
+
+// Joi.string()
+//         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
