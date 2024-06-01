@@ -1,4 +1,4 @@
-import { Db } from "mongodb";
+import { Db, ObjectId } from 'mongodb';
 import { CategoryDTO, CategoryResponseDTO, CreateCategoryDTO } from "../models/dtos/products/categoryDTO";
 import db from "../config/database";
 import { Category } from "../models/interfaces/products/categoryInterface";
@@ -17,6 +17,7 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
     const resultCategory = await collection.insertOne({
         ...categoryData,
         status: true,
+        // company: new ObjectId(categoryData.company),
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -30,7 +31,7 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
         name: categoryData.name,
         description: categoryData.description,
         status: categoryData.status,
-        company: categoryData.comapany,
+        company: categoryData.company,
         companyId: categoryData.companyId,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -65,3 +66,40 @@ export const getCategoriesRepository = async (companyId: string): Promise<Catego
     });
 
 }
+
+export const updateCategoriesRepository = async (
+    companyId: string,
+    categoryId: string,
+    updatedData: Partial<Category>): Promise<Category | null> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+
+    const result = await dbInstance.collection<Category>('categories').findOneAndUpdate(
+        {
+            _id: new ObjectId(categoryId),
+            company: companyId
+        },
+        {
+            $set: updatedData
+        },
+        {
+            returnDocument: 'after'
+        }
+    )
+
+    // if (!result) {
+    //     return null;
+    // }
+
+    return result
+
+    // return {
+    //     name: result.name,
+    //     description: result.description,
+    //     status: result.status
+    // } as Category;
+};

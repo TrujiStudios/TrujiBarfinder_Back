@@ -2,6 +2,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 // import express from 'express';
 import { environment } from '../../config/environment';
+import { ObjectId } from 'mongodb';
 // import { findCompanyByIdRepository } from '../../repositories/companyRepositories';
 
 
@@ -33,7 +34,9 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     // console.log('Token decodificado:', company);
 
     // Adjuntar información del usuario al objeto de solicitud
-    req.body.company = payload.id;
+    // req.body.company = payload.id;
+
+    req.body.company = new ObjectId(payload.id);
 
     // Llamar a la siguiente función de middleware
     next();

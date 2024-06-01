@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { createCategoryService, getCategoriesService } from '../../services/products/categoryService';
+import { createCategoryService, getCategoriesService, updateCategoriesService } from '../../services/products/categoryService';
 import { CreateCategoryDTO } from '../../models/dtos/products/categoryDTO';
+import { Category } from '../../models/interfaces/products/categoryInterface';
+// import { ObjectId } from 'mongodb';
 
 
 
 export const createCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     const categoryData: CreateCategoryDTO = _req.body;
     try {
-        const companyId: string = _req.body.company;
-
-        console.log('Usuario autenticado:', companyId);
+        // categoryData.company = new ObjectId(categoryData.company);
 
         const newCategory = await createCategoryService(categoryData);
         return res.status(201).json(newCategory);
@@ -34,5 +34,21 @@ export const getCategoriesController = async (_req: Request, res: Response): Pro
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message })
 
+    }
+}
+
+export const updateCategoryController = async (_req: Request, res: Response): Promise<Response> => {
+    try {
+        const companyId: string = _req.body.company;
+        const categoryId: string = _req.params.categoryId;
+        const updatedData: Partial<Category> = _req.body;
+
+        const categories = await updateCategoriesService(companyId, categoryId, updatedData);
+
+        return res.status(200).json(categories);
+
+
+    } catch (error: unknown) {
+        return res.status(500).json({ message: (error as Error).message })
     }
 }

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 
 
 export interface CreateCategoryDTO {
@@ -5,7 +6,7 @@ export interface CreateCategoryDTO {
     description: string;
     status: boolean;
     companyId: string;
-    comapany: string;
+    company: string;
 }
 
 export interface CategoryResponseDTO {
@@ -21,7 +22,8 @@ export interface CategoryResponseDTO {
 
 
 export interface CategoryDTO {
-    name: string;
-    description: string;
-    status: boolean;
+    name?: string;
+    description?: string;
+    status?: boolean;
 }
+

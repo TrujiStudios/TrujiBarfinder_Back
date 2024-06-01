@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { createCategoryController, getCategoriesController } from '../controllers/products/categoriesController';
+import { createCategoryController, getCategoriesController, updateCategoryController } from '../controllers/products/categoriesController';
 import { validate } from '../middlewares/validate';
 import { createCategorySchema } from '../utils/validation/categoryValidate';
 import { authenticateToken } from '../middlewares/authentication/auth';
@@ -18,5 +18,8 @@ router.post('/category/create',
 
 //get categories
 router.get('/category/get', authenticateToken, getCategoriesController);
+
+//update category
+router.put('/category/update/:categoryId', authenticateToken, updateCategoryController);
 
 export default router;
