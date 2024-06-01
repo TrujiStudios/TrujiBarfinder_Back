@@ -13,6 +13,7 @@ export interface CreateProductDTO {
     code: string;
     createdAt: Date;
     updatedAt: Date;
+    companyId: string;
 }
 
 export interface ProductResponseDTO {
