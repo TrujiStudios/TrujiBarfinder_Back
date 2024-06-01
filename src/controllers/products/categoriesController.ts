@@ -9,7 +9,6 @@ import { Category } from '../../models/interfaces/products/categoryInterface';
 export const createCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     const categoryData: CreateCategoryDTO = _req.body;
     try {
-        // categoryData.company = new ObjectId(categoryData.company);
 
         const newCategory = await createCategoryService(categoryData);
         return res.status(201).json(newCategory);
