@@ -1,5 +1,5 @@
-import { CreateProductDTO, ProductResponseDTO } from "../models/dtos/products/productDTO";
-import { Product } from "../models/interfaces/products/productInterface";
+import { CreateProductDTO, ProductResponseDTO, UpdateProductDTO } from "../models/dtos/products/productDTO";
+import { Product, Products } from "../models/interfaces/products/productInterface";
 import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
 
@@ -115,3 +115,56 @@ export const getProductsRepository = async (companyId: string): Promise<ProductR
         updatedAt: product.updatedAt // Add updatedAt property
     }));
 }
+
+
+
+export const updateProductRepository = async (
+    companyId: string,
+    productId: string,
+    updatedData: Partial<UpdateProductDTO>
+): Promise<ProductResponseDTO | null> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const result = await dbInstance.collection<Products>('products').findOneAndUpdate(
+        {
+            _id: new ObjectId(productId),
+            company: companyId
+        },
+        {
+            $set: {
+                ...updatedData,
+                updatedAt: new Date(),
+                category: new ObjectId(updatedData.category) // Convert category to ObjectId
+            }
+        },
+        {
+            returnDocument: 'after'
+        }
+    );
+
+    if (!result) {
+        return null;
+    }
+
+    if (!result) {
+        throw new Error('Category not found');
+    }
+
+    return {
+        _id: result._id.toString(),
+        name: result.name,
+        description: result.description,
+        price: result.price,
+        category: result.category.toString(), // Convert ObjectId to string
+        company: result.company,
+        status: result.status,
+        image: result.image,
+        code: result.code,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt
+    };
+};

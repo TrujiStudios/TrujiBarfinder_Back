@@ -3,7 +3,24 @@ import { ObjectId } from "mongodb";
 
 
 export interface Product {
-    _id: string;
+    _id?: string;
+    id?: string;
+    name: string;
+    description: string;
+    price: number;
+    category: ObjectId;
+    company: string;
+    status: boolean;
+    image: string;
+    code: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+
+export interface Products {
+    // _id?: string;
+    id?: string;
     name: string;
     description: string;
     price: number;
