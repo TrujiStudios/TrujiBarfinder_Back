@@ -17,7 +17,6 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
     const resultCategory = await collection.insertOne({
         ...categoryData,
         status: true,
-        // company: new ObjectId(categoryData.company),
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -87,13 +86,14 @@ export const updateCategoriesRepository = async (
             $set: updatedData
         },
         {
+            // returnDocument: 'before'
             returnDocument: 'after'
         }
     )
 
-    // if (!result) {
-    //     return null;
-    // }
+    if (!result) {
+        throw new Error('Category not found');
+    }
 
     return result
 
