@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createCategoryService, getCategoriesService, updateCategoriesService } from '../../services/products/categoryService';
+import { createCategoryService, deleteCategoriesService, getCategoriesService, updateCategoriesService } from '../../services/products/categoryService';
 import { CreateCategoryDTO } from '../../models/dtos/products/categoryDTO';
 import { Category } from '../../models/interfaces/products/categoryInterface';
 // import { ObjectId } from 'mongodb';
@@ -48,6 +48,20 @@ export const updateCategoryController = async (_req: Request, res: Response): Pr
 
 
     } catch (error: unknown) {
+        return res.status(500).json({ message: (error as Error).message })
+    }
+}
+
+export const deleteCategoryController = async (_req: Request, res: Response): Promise<Response> => {
+    try {
+        const companyId: string = _req.body.company;
+        const categoryId: string = _req.params.categoryId;
+
+        const categories = await deleteCategoriesService(companyId, categoryId)
+        return res.status(200).json({ message: 'Category deleted', data: categories });
+
+    }
+    catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message })
     }
 }
