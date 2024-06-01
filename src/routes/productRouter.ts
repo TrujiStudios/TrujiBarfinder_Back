@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { createCategoryController, getCategoriesController, updateCategoryController } from '../controllers/products/categoriesController';
+import { createCategoryController, deleteCategoryController, getCategoriesController, updateCategoryController } from '../controllers/products/categoriesController';
 import { validate } from '../middlewares/validate';
 import { createCategorySchema } from '../utils/validation/categoryValidate';
 import { authenticateToken } from '../middlewares/authentication/auth';
@@ -21,5 +21,8 @@ router.get('/category/get', authenticateToken, getCategoriesController);
 
 //update category
 router.put('/category/update/:categoryId', authenticateToken, updateCategoryController);
+
+//delete category
+router.delete('/category/delete/:categoryId', authenticateToken, deleteCategoryController);
 
 export default router;
