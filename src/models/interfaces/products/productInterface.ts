@@ -1,4 +1,5 @@
-import { Category } from "./categoryInterface";
+import { ObjectId } from "mongodb";
+// import { Category } from "./categoryInterface";
 
 
 export interface Product {
@@ -6,7 +7,7 @@ export interface Product {
     name: string;
     description: string;
     price: number;
-    category: Category;
+    category: ObjectId;
     company: string;
     status: boolean;
     image: string;
