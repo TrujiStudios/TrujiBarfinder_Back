@@ -1,9 +1,9 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 // import express from 'express';
+import { environment } from '../../config/environment';
+// import { findCompanyByIdRepository } from '../../repositories/companyRepositories';
 
-
-const SECRET_KEY = process.env.SECRET_KEY || 'default-secret-key';
 
 interface Payload {
     id: string;
@@ -12,33 +12,43 @@ interface Payload {
 
 // validar el token del usuario 
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Expected format: "Bearer <token>"
+    const token = authHeader && authHeader.split(' ')[1]; // Formato esperado: "Bearer <token>"
 
     if (!token) {
-        return res.status(401).json({ message: 'Token is missing' });
+        return res.status(401).json({ message: 'Falta el token' });
     }
 
     const payload = validateToken(token);
 
     if (!payload) {
-        return res.status(401).json({ message: 'Invalid token' });
+        return res.status(401).json({ message: 'Token inválido' });
     }
 
-    // Attach user information to the request object
-    req.body.user = payload;
+    //verificar el id del usuario 
+    // const company = await findCompanyByIdRepository(payload.id);
 
+
+    // console.log('Token decodificado:', company);
+
+    // Adjuntar información del usuario al objeto de solicitud
+    req.body.company = payload.id;
+
+    // Llamar a la siguiente función de middleware
     next();
+    return; // Añade esta línea para asegurar que todas las rutas de código devuelven un valor
 };
 
 
 export const validateToken = (token: string): Payload | null => {
     try {
-        const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+        const decoded = jwt.verify(token, environment.jetSecret || 'defaultSecret') as JwtPayload;
         return decoded as Payload;
     } catch (error) {
         console.error('Invalid token:', error);
         return null;
     }
 };
+
+
