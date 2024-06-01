@@ -15,7 +15,7 @@ export const createProductService = async (productData: CreateProductDTO): Promi
     }
 }
 
-export const getProductsService = async ({ companyId }: CreateProductDTO): Promise<ProductResponseDTO[]> => {
+export const getProductsService = async (companyId: string): Promise<ProductResponseDTO[]> => {
 
     try {
 
