@@ -37,7 +37,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     // req.body.company = payload.id;
 
     req.body.company = new ObjectId(payload.id);
-
+    console.log('Token decodificado:', req.body.company);
     // Llamar a la siguiente función de middleware
     next();
     return; // Añade esta línea para asegurar que todas las rutas de código devuelven un valor
