@@ -62,7 +62,8 @@ export const getProductsRepository = async (companyId: string): Promise<ProductR
                     localField: "category",  //es el campo de la coleccion actual
                     foreignField: "_id",
                     as: "category"
-                }
+                },
+
             },
             {
                 $lookup: {
@@ -77,8 +78,13 @@ export const getProductsRepository = async (companyId: string): Promise<ProductR
                     name: 1,
                     description: 1,
                     price: 1,
-                    category: 1,
-                    company: 1,
+                    category: [
+                        "$category.name",
+                    ],
+                    company: [
+                        "$company.nameCompany",
+                        "$company.tipoNegocio"
+                    ],
                     status: 1,
                     image: 1,
                     code: 1
