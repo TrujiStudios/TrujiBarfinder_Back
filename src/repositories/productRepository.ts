@@ -25,3 +25,18 @@ export const createProductRepository = async (categoryData: CreateProductDTO): P
 
     return {} as ProductResponseDTO;
 }
+
+
+
+export const getProductsRepository = async (companyId: string): Promise<ProductResponseDTO[]> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const collection = dbInstance.collection<Product>('products');
+    const products = await collection.find({ companyId }).toArray();
+
+    return products;
+}
