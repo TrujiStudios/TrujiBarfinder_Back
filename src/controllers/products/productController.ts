@@ -18,7 +18,7 @@ export const createProductController = async (_req: Request, res: Response): Pro
 
 export const getProductsController = async (_req: Request, res: Response): Promise<Response> => {
 
-    const companyId: CreateProductDTO = _req.body;
+    const companyId: string = _req.body.company;
 
     try {
 
