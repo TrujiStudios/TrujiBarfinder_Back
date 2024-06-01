@@ -1,4 +1,4 @@
-import { Category } from "../../interfaces/products/categoryInterface";
+// import { Category } from "../../interfaces/products/categoryInterface";
 
 
 export interface CreateProductDTO {
@@ -6,7 +6,7 @@ export interface CreateProductDTO {
     name: string;
     description: string;
     price: number;
-    category: Category;
+    category: string;
     company: string;
     status: boolean;
     image: string;
@@ -21,7 +21,7 @@ export interface ProductResponseDTO {
     name: string;
     description: string;
     price: number;
-    category: Category;
+    category: string;
     company: string;
     status: boolean;
     image: string;
