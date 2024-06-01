@@ -1,6 +1,6 @@
 import { CategoryDTO, CategoryResponseDTO, CreateCategoryDTO } from "../../models/dtos/products/categoryDTO";
 import { Category } from "../../models/interfaces/products/categoryInterface";
-import { createCategoryRepository, getCategoriesRepository, updateCategoriesRepository } from "../../repositories/categoryRepository";
+import { createCategoryRepository, deleteCategoriesRepository, getCategoriesRepository, updateCategoriesRepository } from "../../repositories/categoryRepository";
 
 
 
@@ -42,6 +42,20 @@ export const updateCategoriesService = async (
         return categories;
 
     } catch (error: unknown) {
+        throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+export const deleteCategoriesService = async (
+    companyId: string,
+    categoryId: string): Promise<boolean> => {
+    try {
+
+        await deleteCategoriesRepository(companyId, categoryId);
+        return true;
+
+    }
+    catch (error: unknown) {
         throw new Error('Error creating company: ' + (error as Error).message);
     }
 }
