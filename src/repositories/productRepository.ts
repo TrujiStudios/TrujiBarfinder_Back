@@ -168,3 +168,23 @@ export const updateProductRepository = async (
         updatedAt: result.updatedAt
     };
 };
+
+
+export const deleteProductRepository = async (companyId: string, productId: string): Promise<boolean> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const result = await dbInstance.collection<Products>('products').deleteOne({
+        _id: new ObjectId(productId),
+        company: companyId
+    });
+
+    if (result.deletedCount === 0) {
+        throw new Error('Product not found');
+    }
+
+    return true;
+}

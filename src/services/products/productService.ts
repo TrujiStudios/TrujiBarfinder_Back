@@ -1,5 +1,5 @@
 import { CreateProductDTO, ProductResponseDTO, UpdateProductDTO } from "../../models/dtos/products/productDTO";
-import { createProductRepository, getProductsRepository, updateProductRepository } from "../../repositories/productRepository";
+import { createProductRepository, deleteProductRepository, getProductsRepository, updateProductRepository } from "../../repositories/productRepository";
 
 
 
@@ -39,5 +39,17 @@ export const updateProductService = async (
 
     } catch (error: unknown) {
         throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+
+export const deleteProductService = async (companyId: string, productId: string): Promise<boolean> => {
+
+    try {
+
+        const products = await deleteProductRepository(companyId, productId);
+        return products;
+    } catch (error: unknown) {
+        throw new Error('Error getting companies: ' + (error as Error).message);
     }
 }

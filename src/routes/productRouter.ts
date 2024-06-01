@@ -4,7 +4,7 @@ import { createCategoryController, deleteCategoryController, getCategoriesContro
 import { validate } from '../middlewares/validate';
 import { createCategorySchema } from '../utils/validation/categoryValidate';
 import { authenticateToken } from '../middlewares/authentication/auth';
-import { createProductController, getProductsController, updateProductController } from '../controllers/products/productController';
+import { createProductController, deleteProductController, getProductsController, updateProductController } from '../controllers/products/productController';
 
 
 const router = express.Router();
@@ -37,5 +37,8 @@ router.get('/get', authenticateToken, getProductsController);
 
 //update product
 router.put('/update/:productId', authenticateToken, updateProductController);
+
+//delete product
+router.delete('/delete/:productId', authenticateToken, deleteProductController);
 
 export default router;
