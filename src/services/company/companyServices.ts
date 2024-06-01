@@ -1,4 +1,4 @@
-import { CompanyResponseDTO } from "../../dtos/companyDTO";
+import { CompanyResponseDTO } from "../../models/dtos/company/companyDTO";
 import { getCompaniesRepository } from "../../repositories/authRepositories";
 
 export const getCompaniesService = async (): Promise<{ companies: CompanyResponseDTO[], count: number }> => {

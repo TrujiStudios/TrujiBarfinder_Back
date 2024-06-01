@@ -1,4 +1,4 @@
-import { CreateCompanyDTO, CompanyResponseDTO, Payload } from '../../dtos/companyDTO';
+import { CreateCompanyDTO, CompanyResponseDTO, Payload } from '../../models/dtos/company/companyDTO';
 // import { ICompany } from '../../interfaces/companyInterface';
 import { createCompanyRepository } from '../../repositories/authRepositories';
 import { byEmailcompanyRepository, findCompanyByEmailRepository } from '../../repositories/companyRepositories';

@@ -1,8 +1,8 @@
 
-import { CreateCompanyDTO, CompanyResponseDTO } from '../dtos/companyDTO';
+import { CreateCompanyDTO, CompanyResponseDTO } from '../models/dtos/company/companyDTO';
 import { Db } from 'mongodb';
 import db from '../config/database';
-import { ICompany } from '../interfaces/companyInterface';
+import { ICompany } from '../models/interfaces/auth/authInterface';
 
 
 export const createCompanyRepository = async (companyData: CreateCompanyDTO): Promise<CompanyResponseDTO> => {

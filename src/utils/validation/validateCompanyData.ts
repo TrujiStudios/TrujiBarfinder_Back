@@ -1,4 +1,4 @@
-import { CompanyResponseDTO, Payload } from "../../dtos/companyDTO";
+import { CompanyResponseDTO, Payload } from "../../models/dtos/company/companyDTO";
 
 
 

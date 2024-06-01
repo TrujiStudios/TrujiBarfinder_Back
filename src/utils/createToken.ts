@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { Payload } from "../dtos/companyDTO";
+import { Payload } from "../models/dtos/company/companyDTO";
 
 
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CreateCompanyDTO, Payload } from '../../dtos/companyDTO';
+import { CreateCompanyDTO, Payload } from '../../models/dtos/company/companyDTO';
 import createCompanyService, { authLoginCompanyServices } from '../../services/authentication/autenticationService';
 
 

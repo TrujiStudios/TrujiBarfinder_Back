@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { ComparePasswordFunction } from '../interfaces/campareInterface';
+import { ComparePasswordFunction } from '../models/interfaces/auth/campareInterface';
 
 
 

@@ -1,8 +1,8 @@
 
 import { Db } from 'mongodb';
 import db from '../config/database';
-import { ICompany } from '../interfaces/companyInterface';
-import { CompanyResponseDTO } from '../dtos/companyDTO';
+import { ICompany } from '../models/interfaces/auth/authInterface';
+import { CompanyResponseDTO } from '../models/dtos/company/companyDTO';
 // import { CompanyResponseLoginDTO } from '../dtos/companyDTO';
 
 

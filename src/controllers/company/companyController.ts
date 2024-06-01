@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { CompanyResponseDTO } from '../../dtos/companyDTO';
+import { CompanyResponseDTO } from '../../models/dtos/company/companyDTO';
 import { getCompaniesService } from '../../services/company/companyServices';
 
 
