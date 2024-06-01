@@ -96,10 +96,26 @@ export const updateCategoriesRepository = async (
     }
 
     return result
-
-    // return {
-    //     name: result.name,
-    //     description: result.description,
-    //     status: result.status
-    // } as Category;
 };
+
+
+export const deleteCategoriesRepository = async (
+    companyId: string,
+    categoryId: string): Promise<boolean> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const result = await dbInstance.collection<Category>('categories').deleteOne({
+        _id: new ObjectId(categoryId),
+        company: companyId
+    });
+
+    if (result.deletedCount === 0) {
+        throw new Error('Category not found');
+    }
+
+    return true;
+}
