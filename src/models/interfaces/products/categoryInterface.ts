@@ -10,5 +10,6 @@ export interface Category {
     createdAt: Date;
     updatedAt: Date;
     company?: string;
+    // _id?: string;
     // value: string;
 }
