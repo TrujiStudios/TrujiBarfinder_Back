@@ -1,5 +1,5 @@
-import { CategoryResponseDTO, CreateCategoryDTO } from "../../models/dtos/products/categoryDTO";
-import { createCategoryRepository } from "../../repositories/categoryRepository";
+import { CategoryDTO, CategoryResponseDTO, CreateCategoryDTO } from "../../models/dtos/products/categoryDTO";
+import { createCategoryRepository, getCategoriesRepository } from "../../repositories/categoryRepository";
 
 
 
@@ -18,4 +18,15 @@ export const createCategoryService = async (
     }
 };
 
-// export const getCategoriesService = async (): Promise<CategoryResponseDTO[]> =>
+export const getCategoriesService = async (companyId: string): Promise<CategoryDTO[]> => {
+
+
+    try {
+
+        const categories = await getCategoriesRepository(companyId);
+        return categories;
+
+    } catch (error: unknown) {
+        throw new Error('Error creating company: ' + (error as Error).message);
+    }
+};
