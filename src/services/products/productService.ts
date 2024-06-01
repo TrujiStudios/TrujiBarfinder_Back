@@ -1,5 +1,5 @@
 import { CreateProductDTO, ProductResponseDTO } from "../../models/dtos/products/productDTO";
-import { createProductRepository } from "../../repositories/productRepository";
+import { createProductRepository, getProductsRepository } from "../../repositories/productRepository";
 
 
 
@@ -12,5 +12,17 @@ export const createProductService = async (productData: CreateProductDTO): Promi
 
     } catch (error: unknown) {
         throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+export const getProductsService = async ({ companyId }: CreateProductDTO): Promise<ProductResponseDTO[]> => {
+
+    try {
+
+        const products = await getProductsRepository(companyId);
+        return products;
+
+    } catch (error: unknown) {
+        throw new Error('Error getting companies: ' + (error as Error).message);
     }
 }
