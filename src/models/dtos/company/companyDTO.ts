@@ -5,10 +5,13 @@ export interface CreateCompanyDTO {
     name: string;
     lastName: string;
     phone: string;
-    nameCompany: string;
-    tipoNegocio: string;
+    businessName: string;
+    country: string;
+    businessType: string;
     email: string;
     password: string;
+    acceptTerms: boolean;
+    preloadProducts: boolean;
 }
 
 
@@ -17,10 +20,13 @@ export interface CompanyResponseDTO {
     name: string;
     lastName: string;
     phone: string;
-    nameCompany: string;
-    tipoNegocio: string;
+    businessName: string;
+    country: string;
+    businessType: string;
     email: string;
     password?: string;
+    acceptTerms?: boolean;
+    preloadProducts?: boolean;
     createdAt: Date;
     updatedAt: Date;
     token?: string;

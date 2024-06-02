@@ -7,11 +7,14 @@ export interface ICompany {
     name: string;
     lastName: string;
     phone: string;
-    nameCompany: string;
-    tipoNegocio: string;
+    businessName: string;
+    country: string;
+    businessType: string;
     email: string;
     password: string;
     status: Status | string;
+    acceptTerms: boolean;
+    preloadProducts: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
