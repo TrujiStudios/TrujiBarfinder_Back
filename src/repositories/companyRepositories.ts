@@ -50,8 +50,9 @@ export const findCompanyByIdRepository = async (companyId: string): Promise<Comp
         name: company.name,
         lastName: company.lastName,
         phone: company.phone,
-        nameCompany: company.nameCompany,
-        tipoNegocio: company.tipoNegocio,
+        businessName: company.businessName,
+        country: company.country,
+        businessType: company.businessType,
         email: company.email,
         createdAt: company.createdAt,
         updatedAt: company.updatedAt
