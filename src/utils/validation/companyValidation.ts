@@ -5,10 +5,13 @@ export const createCompanySchema = Joi.object({
     name: Joi.string().trim().min(3).max(30).required(),
     lastName: Joi.string().required().trim(),
     phone: Joi.string().required().trim(),
-    nameCompany: Joi.string().required().trim(),
-    tipoNegocio: Joi.string().required().trim(),
+    businessName: Joi.string().required().trim(),
+    country: Joi.string().required().trim(),
+    businessType: Joi.string().required().trim(),
     email: Joi.string().email().required().trim().lowercase(),
     password: Joi.string().required().trim(),
+    acceptTerms: Joi.boolean().required(),
+    preloadProducts: Joi.boolean().required(),
 });
 
 // Joi.string()
