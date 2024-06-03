@@ -26,8 +26,15 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
         const companyLogin: Payload = _req.body;
 
         const { company, token } = await authLoginCompanyServices(companyLogin);
-        return res.status(200).json({
-            message: 'Company logged in successfully',
+
+        return res.cookie('token', token, {
+            httpOnly: true,
+            //Que expire en una hora
+            expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
+            // expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 semana
+            secure: false, // esto debería ser true en producción
+        }).status(200).json({
+            message: 'Negocio logueado exitosamente',
             company: company,
             token
         });
