@@ -25,7 +25,7 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
 
         const companyLogin: Payload = _req.body;
 
-        const { company, token } = await authLoginCompanyServices(companyLogin);
+        const { token } = await authLoginCompanyServices(companyLogin);
 
         return res.cookie('token', token, {
             httpOnly: true,
@@ -35,8 +35,8 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
             secure: false, // esto debería ser true en producción
         }).status(200).json({
             message: 'Negocio logueado exitosamente',
-            company: company,
-            token
+            // company: company,
+            // token
         });
 
     } catch (error: unknown) {
