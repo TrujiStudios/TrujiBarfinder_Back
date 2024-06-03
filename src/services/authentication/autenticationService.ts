@@ -49,6 +49,10 @@ export const authLoginCompanyServices = async (companyData: Payload): Promise<{ 
 
     try {
 
+        if (!companyData.email) {
+            throw new Error('Email is required');
+        }
+
         const existingCompany = await byEmailcompanyRepository(companyData.email);
 
         if (!existingCompany) {
@@ -65,7 +69,7 @@ export const authLoginCompanyServices = async (companyData: Payload): Promise<{ 
 
         await comparePassword(companyData.password, existingCompany.password);
 
-        const token = await createToken({ id: existingCompany._id, email: existingCompany.email });
+        const token = await createToken({ sub: existingCompany._id } as Payload);
 
         return {
             company: existingCompany,
