@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import cookie from "cookie-parser";
+import cookieParser from 'cookie-parser';
 
 import { errorHandler } from './middlewares/errorHandler';
 
@@ -8,11 +8,15 @@ import routes from './routes';
 
 const app = express();
 
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(cookie());
+app.use(cookieParser());
 
 app.use('/api/v1', routes);
 
