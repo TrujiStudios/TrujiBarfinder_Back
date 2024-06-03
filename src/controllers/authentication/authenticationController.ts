@@ -9,7 +9,10 @@ export const authSignupCompanyContoller = async (req: Request, res: Response): P
 
     try {
         const newCompany = await createCompanyService(companyData);
-        return res.status(201).json(newCompany);
+        return res.status(201).json({
+            message: 'Negocio creado exitosamente',
+            newCompany
+        });
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message });
     }
@@ -23,7 +26,11 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
         const companyLogin: Payload = _req.body;
 
         const { company, token } = await authLoginCompanyServices(companyLogin);
-        return res.status(200).json({ company: company, token });
+        return res.status(200).json({
+            message: 'Company logged in successfully',
+            company: company,
+            token
+        });
 
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message });

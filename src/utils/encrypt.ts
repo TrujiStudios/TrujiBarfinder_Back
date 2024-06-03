@@ -30,6 +30,6 @@ export const comparePassword: ComparePasswordFunction = async (password: string,
 
 
     } catch (error) {
-        throw new Error('Error comparing password: ' + (error as Error).message);
+        throw new Error('Error ' + (error as Error).message);
     }
 };

@@ -21,6 +21,8 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
         throw new Error('Company was not created');
     }
 
+    // return {} as CompanyResponseDTO;
+
     return {
         id: resultCompany.insertedId.toString(),
         name: companyData.name,
