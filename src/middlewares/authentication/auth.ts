@@ -17,11 +17,11 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Formato esperado: "Bearer <token>"
 
-    if (!token) {
-        return res.status(401).json({ message: 'Falta el token' });
+    if (!req.cookies.token && !token) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const payload = validateToken(token);
+    const payload = validateToken(req.cookies.token);
 
     if (!payload) {
         return res.status(401).json({ message: 'Token inválido' });
