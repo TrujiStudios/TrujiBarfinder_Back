@@ -28,12 +28,12 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
         const { company, token } = await authLoginCompanyServices(companyLogin);
 
         return res.cookie('token', token, {
-            httpOnly: true,
+            httpOnly: false,
             //Que expire en una hora
             expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
             // expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 semana
-            secure: false, // esto debería ser true en producción
-            sameSite: 'none'
+            // secure: false, // esto debería ser true en producción
+            // sameSite: 'none'
             // sameSite: 'strct' //pasa en producción
         }).status(200).json({
             message: 'Negocio logueado exitosamente',
