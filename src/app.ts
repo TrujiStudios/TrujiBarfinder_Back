@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import cookie from "cookie-parser";
 
 import { errorHandler } from './middlewares/errorHandler';
 
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookie());
 
 app.use('/api/v1', routes);
 
