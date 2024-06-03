@@ -20,6 +20,8 @@ export const getProductsController = async (_req: Request, res: Response): Promi
 
     const companyId: string = _req.body.company;
 
+    console.log("Cookies ", _req.cookies.token);
+
     try {
 
         const products = await getProductsService(companyId);

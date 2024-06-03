@@ -1,5 +1,5 @@
 import express from 'express';
-import { authLoginCompanyController, authSignupCompanyContoller } from '../controllers/authentication/authenticationController';
+import { authLoginCompanyController, authLogoutCompanyController, authSignupCompanyContoller } from '../controllers/authentication/authenticationController';
 import { validate } from '../middlewares/validate';
 import { createCompanySchema } from '../utils/validation/companyValidation';
 
@@ -12,6 +12,7 @@ router.post('/signup', validate(createCompanySchema), authSignupCompanyContoller
 router.post('/login', authLoginCompanyController);
 
 //logout company
+router.post('/logout', authLogoutCompanyController);
 
 
 

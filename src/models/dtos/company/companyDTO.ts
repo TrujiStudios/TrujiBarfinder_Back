@@ -35,8 +35,9 @@ export interface CompanyResponseDTO {
 
 export interface Payload {
     id: string | undefined;
-    email: string;
+    email?: string;
     password?: string;
+    sub?: string | undefined;
 }
 
 
