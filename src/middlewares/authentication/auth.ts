@@ -1,47 +1,75 @@
+import { ObjectId } from 'mongodb';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-// import express from 'express';
+
+import { findCompanyByEmailServiceFixed } from '../../services/company/companyServices';
 import { environment } from '../../config/environment';
-import { ObjectId } from 'mongodb';
-// import { findCompanyByIdRepository } from '../../repositories/companyRepositories';
+import { Payload } from '../../models/dtos/company/companyDTO';
+import { Unauthorized } from '../../utils/errors/errors';
+import errorResponse from '../../utils/errors/responseError';
 
 
-interface Payload {
-    id: string;
-    email: string;
-    sub: string;
-}
-
-// validar el token del usuario 
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Formato esperado: "Bearer <token>"
 
-    if (!req.cookies.token && !token) {
-        return res.status(401).json({ message: 'Unauthorized' });
+    try {
+
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1]; // Formato esperado: "Bearer <token>"
+
+        if (!req.cookies.TrujiStudios && !token) {
+            throw new Unauthorized('Token not provided');
+        }
+        const payload = validateToken(req.cookies.TrujiStudios);
+
+        if (!payload) {
+            throw new Unauthorized('Invalid token');
+        }
+
+        const authIsAutehnticated = await authSession(req.session.isAutehnticated || false);
+        if (!authIsAutehnticated) throw new Unauthorized('Session not active');
+        //verificar el id del usuario 
+        // const company = await findCompanyByIdRepository(payload.id);
+
+
+        req.body.company = new ObjectId(payload.sub);
+        console.log('Token decodificado:', req.body.company);
+        console.log('isAutehnticated ', req.session.isAutehnticated);
+        // console.log('cOMAPNY ', req.session.company);
+
+
+
+        if (!req.session.company) {
+            console.log('Sesión inactiva');
+            throw new Unauthorized('Session not active');
+        }
+
+        if (!req.session.company.email || !req.session.company.password) {
+            console.log('Sesión inactiva');
+            throw new Unauthorized('Session not active');
+        }
+
+        const sessioncompany = await findCompanyByEmailServiceFixed(req.session.company.email, req.session.company.password);
+
+        if (!sessioncompany) throw new Unauthorized('Session not active');
+
+        if (req.session && req.session.company && req.session.company.email === sessioncompany.email && req.session.token) {
+            console.log('Sesión activa');
+            next();
+            return;
+        }
+        else {
+            console.log('Sesión inactiva');
+            throw new Unauthorized('Session not active');
+        }
+
+
+
+    } catch (error: unknown) {
+        return errorResponse(res, error as Error);
+
     }
 
-    const payload = validateToken(req.cookies.token);
-
-    if (!payload) {
-        return res.status(401).json({ message: 'Token inválido' });
-    }
-
-    //verificar el id del usuario 
-    // const company = await findCompanyByIdRepository(payload.id);
-
-
-    // console.log('Token decodificado:', company);
-
-    // Adjuntar información del usuario al objeto de solicitud
-    // req.body.company = payload.id;
-
-    req.body.company = new ObjectId(payload.sub);
-    console.log('Token decodificado:', req.body.company);
-    // Llamar a la siguiente función de middleware
-    next();
-    return; // Añade esta línea para asegurar que todas las rutas de código devuelven un valor
 };
 
 
@@ -56,3 +84,10 @@ export const validateToken = (token: string): Payload | null => {
 };
 
 
+const authSession = async (isAutehnticated: boolean) => {
+    if (isAutehnticated) {
+        return true;
+    } else {
+        return false;
+    }
+}
