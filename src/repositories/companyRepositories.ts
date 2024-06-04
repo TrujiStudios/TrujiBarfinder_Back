@@ -59,6 +59,51 @@ export const findCompanyByIdRepository = async (companyId: string): Promise<Comp
     };
 }
 
+// buscar compañia por email 
+
+
+export const findCompanyByEmailRepositoryFixed = async (email: string): Promise<CompanyResponseDTO | null> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+    const collection = dbInstance.collection<ICompany>('company');
+    const results = await collection.aggregate([
+        {
+            $match: {
+                // _id: new ObjectId(company),
+                email: email
+            }
+        },
+        {
+            $project:
+            {
+                _id: 1,
+                name: 1,
+                email: 1,
+                password: 1
+            }
+        }
+    ]).toArray();
+
+    if (!results) {
+        throw new Error('Company does not exist');
+    }
+
+    return {
+        id: results[0]._id.toString(),
+        name: results[0].name,
+        lastName: results[0].lastName,
+        phone: results[0].phone,
+        businessName: results[0].businessName,
+        country: results[0].country,
+        businessType: results[0].businessType,
+        email: results[0].email,
+        password: results[0].password,
+        createdAt: results[0].createdAt,
+        updatedAt: results[0].updatedAt
+    };
+}
 
 
 
