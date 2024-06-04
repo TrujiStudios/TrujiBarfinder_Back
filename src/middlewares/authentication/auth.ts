@@ -9,6 +9,7 @@ import { ObjectId } from 'mongodb';
 interface Payload {
     id: string;
     email: string;
+    sub: string;
 }
 
 // validar el token del usuario 
@@ -36,7 +37,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     // Adjuntar información del usuario al objeto de solicitud
     // req.body.company = payload.id;
 
-    req.body.company = new ObjectId(payload.id);
+    req.body.company = new ObjectId(payload.sub);
     console.log('Token decodificado:', req.body.company);
     // Llamar a la siguiente función de middleware
     next();
