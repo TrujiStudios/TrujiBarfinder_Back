@@ -8,6 +8,7 @@ import { findCompanyByEmailServiceFixed, getCompaniesService } from '../../servi
 
 export const getCompaniesController = async (_req: Request, res: Response): Promise<Response<{ companies: CompanyResponseDTO[], count: number }>> => {
     try {
+        if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companies = await getCompaniesService();
         return res.status(200).json(companies);
     } catch (error: unknown) {
@@ -21,8 +22,7 @@ export const findCompanyByEmailControllerFixed = async (req: Request, res: Respo
         const { email } = req.body;
         // const companyId: string = req.body.company;
         const password: string = req.body.password;
-
-
+        if (!req.session.isAutehnticated) throw new Error('Session not active');
         const results = await findCompanyByEmailServiceFixed(email, password);
         return res.status(200).json({
             results
