@@ -1,8 +1,16 @@
 import { Request, Response } from 'express';
 import { CreateCompanyDTO, Payload } from '../../models/dtos/company/companyDTO';
 import createCompanyService, { authLoginCompanyServices } from '../../services/authentication/autenticationService';
+// import session from 'express-session';
 
-
+declare module 'express-session' {
+    interface SessionData {
+        company: Payload;
+        visitas: number;
+        isAutehnticated: boolean;
+        token: boolean;
+    }
+}
 
 export const authSignupCompanyContoller = async (req: Request, res: Response): Promise<Response> => {
     const companyData: CreateCompanyDTO = req.body;
@@ -26,19 +34,23 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
         const companyLogin: Payload = _req.body;
 
         const { company, token } = await authLoginCompanyServices(companyLogin);
+        _req.session.company = company;
+        _req.session.token = true
 
-        return res.cookie('token', token, {
+        //visitas
+        _req.session.isAutehnticated = true;
+        _req.session.visitas = _req.session.visitas ? _req.session.visitas + 1 : 1;
+        _req.session.save();
+
+        return res.cookie('TrujiStudios', token, {
             httpOnly: false,
-            //Que expire en una hora
-            expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
-            // expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 semana
-            // secure: false, // esto debería ser true en producción
-            // sameSite: 'none'
-            // sameSite: 'strct' //pasa en producción
+            maxAge: 1000 * 60 * 60, // 1 hora 
+            secure: true, // esto debería ser true en producción
+            sameSite: 'lax'
         }).status(200).json({
             message: 'Negocio logueado exitosamente',
-            company: company,
-            token
+            company: true,
+            // token
         });
 
     } catch (error: unknown) {
@@ -49,5 +61,14 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
 
 
 export const authLogoutCompanyController = async (_req: Request, res: Response): Promise<Response> => {
-    return res.clearCookie('token').status(200).json({ message: 'Negocio deslogueado exitosamente' });
+
+    console.log("session ", _req.session.isAutehnticated);
+
+    await _req.session.destroy((err) => { console.log(err) }); //destruir la sesión
+
+    return res.clearCookie('TrujiStudios').status(200).json({ message: 'Negocio deslogueado exitosamente' });
+
+
+
+    // return res.clearCookie('TrujiStudios').status(200).json({ message: 'Negocio deslogueado exitosamente' });
 };
