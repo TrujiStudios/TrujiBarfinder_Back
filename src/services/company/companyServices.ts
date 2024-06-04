@@ -1,7 +1,7 @@
 import { CompanyResponseDTO } from "../../models/dtos/company/companyDTO";
 import { getCompaniesRepository } from "../../repositories/authRepositories";
 import { findCompanyByEmailRepositoryFixed } from "../../repositories/companyRepositories";
-import { comparePassword } from "../../utils/encrypt";
+// import { comparePassword } from "../../utils/encrypt";
 
 export const getCompaniesService = async (): Promise<{ companies: CompanyResponseDTO[], count: number }> => {
     try {
@@ -29,7 +29,7 @@ export const findCompanyByEmailServiceFixed = async (email: string, password: st
             throw new Error('Password not found for the company');
         }
 
-        await comparePassword(password, companyResults.password);
+        // await comparePassword(password, companyResults.password);
 
         return companyResults;
     } catch (error: unknown) {
