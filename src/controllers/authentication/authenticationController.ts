@@ -62,13 +62,13 @@ export const authLoginCompanyController = async (_req: Request, res: Response): 
 
 export const authLogoutCompanyController = async (_req: Request, res: Response): Promise<Response> => {
 
-    console.log("session ", _req.session.isAutehnticated);
+    console.log("LOGOUT </> ", _req.session.isAutehnticated);
 
     await _req.session.destroy((err) => { console.log(err) }); //destruir la sesión
 
-    return res.clearCookie('TrujiStudios').status(200).json({ message: 'Negocio deslogueado exitosamente' });
+    // Eliminar las cookies
+    res.clearCookie('connect.sid');
+    res.clearCookie('TrujiStudios');
 
-
-
-    // return res.clearCookie('TrujiStudios').status(200).json({ message: 'Negocio deslogueado exitosamente' });
+    return res.status(200).json({ message: 'Negocio deslogueado exitosamente' });
 };
