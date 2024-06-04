@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 import { errorHandler } from './middlewares/errorHandler';
 
@@ -18,17 +19,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        // expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
+        // maxAge: 5000,
+        maxAge: 1000 * 60 * 60, // 1 hora
+
+    }  //esto debería ser true en producción y false en desarrollo para que funcione con http://localhost:5173
+}));
+
+// declare module 'express-session' {
+//     interface SessionData {
+//         user: string;
+//     }
+// }
+
 app.use('/api/v1', routes);
 
 
-app.get('/', (_req: Request, res: Response) => {
-    res.send('Hello, World!');
+
+app.get('/', (_req: Request, _res: Response) => {
+    // _req.session.visitas = _req.session.visitas ? _req.session.visitas + 1 : 1;
+    console.log('session app', _req.session);
 });
 
-
-// app.use((_req: Request, res: Response) => {
-//     res.status(404).json({ message: 'Not found' });
-// });
 app.use(errorHandler);
 
 
