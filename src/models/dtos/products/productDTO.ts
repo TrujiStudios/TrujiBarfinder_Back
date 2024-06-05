@@ -2,7 +2,8 @@
 
 
 export interface CreateProductDTO {
-    _id: string;
+    _id?: string;
+    id?: string;
     name: string;
     description: string;
     price: number;
