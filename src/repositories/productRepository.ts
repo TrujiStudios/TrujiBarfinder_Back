@@ -11,11 +11,14 @@ export const createProductRepository = async (productData: CreateProductDTO): Pr
         throw new Error('Database instance is null');
     }
 
+    delete productData._id;
+
     const collection = dbInstance.collection<Product>('products');
     const resultCategory = await collection.insertOne({
         ...productData,
         category: new ObjectId(productData.category),
-        status: true,
+        // category: new ObjectId('60f3b3b3b3b3b3b3b3b3b3b3'),
+        // status: true,
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -79,6 +82,7 @@ export const getProductsRepository = async (companyId: string): Promise<ProductR
                     description: 1,
                     price: 1,
                     category: [
+                        "$category._id",
                         "$category.name",
                     ],
                     company: [
@@ -128,7 +132,12 @@ export const updateProductRepository = async (
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
-
+    //updatedData.category llega como un array necesito pasar a un string
+    if (updatedData.category) {
+        updatedData.category = updatedData.category.toString();
+    }
+    delete updatedData._id;
+    console.log("Data  2", updatedData);
     const result = await dbInstance.collection<Products>('products').findOneAndUpdate(
         {
             _id: new ObjectId(productId),
