@@ -19,6 +19,7 @@ export const createProductRepository = async (productData: CreateProductDTO): Pr
         category: new ObjectId(productData.category),
         // category: new ObjectId('60f3b3b3b3b3b3b3b3b3b3b3'),
         // status: true,
+        image: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
         createdAt: new Date(),
         updatedAt: new Date()
     });
