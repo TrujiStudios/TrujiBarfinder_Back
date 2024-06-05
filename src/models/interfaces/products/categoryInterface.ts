@@ -6,6 +6,7 @@ export interface Category {
     name: string;
     description: string;
     status: boolean;
+    imagen: string;
     companyId: string;
     createdAt: Date;
     updatedAt: Date;

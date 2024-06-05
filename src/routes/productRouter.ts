@@ -1,21 +1,22 @@
 
 import express from 'express';
 import { createCategoryController, deleteCategoryController, getCategoriesController, updateCategoryController } from '../controllers/products/categoriesController';
-import { validate } from '../middlewares/validate';
-import { createCategorySchema } from '../utils/validation/categoryValidate';
+// import { validate } from '../middlewares/validate';
+// import { createCategorySchema } from '../utils/validation/categoryValidate';
 import { authenticateToken } from '../middlewares/authentication/auth';
 import { createProductController, deleteProductController, getProductsController, updateProductController } from '../controllers/products/productController';
 
 
 const router = express.Router();
 
-
-//create category
-router.post('/category/create',
-    [
-        validate(createCategorySchema)
-        , authenticateToken
-    ], createCategoryController);
+// 
+// create category
+// router.post('/category/create',
+//     [
+//         validate(createCategorySchema)
+//         , authenticateToken
+//     ], createCategoryController);
+router.post('/category/create', authenticateToken, createCategoryController);
 
 //get categories
 router.get('/category/get', authenticateToken, getCategoriesController);

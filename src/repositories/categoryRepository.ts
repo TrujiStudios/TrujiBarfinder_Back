@@ -5,7 +5,6 @@ import { Category } from "../models/interfaces/products/categoryInterface";
 
 
 
-
 export const createCategoryRepository = async (categoryData: CreateCategoryDTO): Promise<CategoryResponseDTO> => {
 
     const dbInstance: Db | null = await db;
@@ -17,6 +16,7 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
     const resultCategory = await collection.insertOne({
         ...categoryData,
         // status: true,
+        imagen: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -31,6 +31,7 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
         description: categoryData.description,
         status: categoryData.status,
         company: categoryData.company,
+        imagen: categoryData.imagen,
         companyId: categoryData.companyId,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -52,6 +53,7 @@ export const getCategoriesRepository = async (companyId: string): Promise<Catego
                 id: 1,
                 name: 1,
                 description: 1,
+                imagen: 1,
                 status: 1
             }
         }
@@ -62,6 +64,7 @@ export const getCategoriesRepository = async (companyId: string): Promise<Catego
             id: category._id.toString(),
             name: category.name,
             description: category.description,
+            imagen: category.imagen,
             status: category.status
         };
     });

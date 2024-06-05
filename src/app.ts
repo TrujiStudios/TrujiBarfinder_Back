@@ -25,6 +25,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: {
         secure: false,
+        httpOnly: false,
         // expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
         // maxAge: 5000,
         maxAge: 1000 * 60 * 60, // 1 hora
