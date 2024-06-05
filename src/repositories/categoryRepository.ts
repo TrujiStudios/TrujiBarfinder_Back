@@ -12,11 +12,11 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
-
+    delete categoryData.id;
     const collection = dbInstance.collection<Category>('categories');
     const resultCategory = await collection.insertOne({
         ...categoryData,
-        status: true,
+        // status: true,
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -49,6 +49,7 @@ export const getCategoriesRepository = async (companyId: string): Promise<Catego
         },
         {
             $project: {
+                id: 1,
                 name: 1,
                 description: 1,
                 status: 1
@@ -58,6 +59,7 @@ export const getCategoriesRepository = async (companyId: string): Promise<Catego
 
     return (await resultsCategies).map((category) => {
         return {
+            id: category._id.toString(),
             name: category.name,
             description: category.description,
             status: category.status
