@@ -1,23 +1,34 @@
-import { CreateComanyDTO, CompanyResponseDTO } from '../../dtos/companyDTO';
+import { CreateCompanyDTO, CompanyResponseDTO, Payload } from '../../models/dtos/company/companyDTO';
+// import { ICompany } from '../../interfaces/companyInterface';
 import { createCompanyRepository } from '../../repositories/authRepositories';
+import { byEmailcompanyRepository, findCompanyByEmailRepository } from '../../repositories/companyRepositories';
+import { createToken } from '../../utils/createToken';
+import { comparePassword, encrypt } from '../../utils/encrypt';
 
 
 
-const createCompanyService = async (companyData: CreateComanyDTO): Promise<CompanyResponseDTO> => {
+const createCompanyService = async (companyData: CreateCompanyDTO): Promise<CompanyResponseDTO> => {
 
     try {
 
-        // Validación de negocio: Verificar si ya existe una compañía con el mismo email
-
+        const existingCompany: boolean = await findCompanyByEmailRepository(companyData.email);
+        if (existingCompany) {
+            throw new Error('Company with this email already exists');
+        }
 
         // Transformar datos antes de guardarlos
-        //  const transformedData = {
+        // const transformedData = {
         //     ...companyData,
         //     name: companyData.name.trim(),
         //     email: companyData.email.toLowerCase(),
         // };
 
-        const newCompany = await createCompanyRepository(companyData);
+        if (companyData.password) {
+            // Encriptar la contraseña
+            companyData.password = await encrypt(companyData.password);
+        }
+
+        let resultsCompany: CompanyResponseDTO = await createCompanyRepository(companyData);
 
         // Registrar la actividad
         // logActivity('Company created', newCompany);
@@ -26,12 +37,54 @@ const createCompanyService = async (companyData: CreateComanyDTO): Promise<Compa
         //  await sendEmail(newCompany.email, 'Company Created', 'Your company has been successfully created.');
 
 
-        return newCompany;
+        return resultsCompany;
 
     } catch (error) {
         throw new Error('Error creating company: ' + (error as Error).message);
     }
 }
+
+
+export const authLoginCompanyServices = async (companyData: Payload): Promise<{ company: CompanyResponseDTO, token: string }> => {
+
+    try {
+
+        if (!companyData.email) {
+            throw new Error('Email is required');
+        }
+
+        const existingCompany = await byEmailcompanyRepository(companyData.email);
+
+        if (!existingCompany) {
+            throw new Error('Company does not exist');
+        }
+
+        if (!existingCompany.password) {
+            throw new Error('Password is required');
+        }
+
+        if (!companyData.password) {
+            throw new Error('Password is required');
+        }
+
+        await comparePassword(companyData.password, existingCompany.password);
+
+        const token = await createToken({ sub: existingCompany._id } as Payload);
+
+        return {
+            company: existingCompany,
+            token
+        };
+
+
+
+    } catch (error) {
+        throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+
+
 
 
 
