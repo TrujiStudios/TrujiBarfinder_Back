@@ -1,5 +1,6 @@
 import { CreateTablesDTO, TablesResponseDTO } from '../../models/dtos/tables/tablesDTO';
 import { createTableRepository, getAllTablesRepository } from '../../repositories/table.Repositoies';
+import { TablesResponseWithMessageDTO } from '../../types/tables/tables.types';
 import { BadRequest } from '../../utils/errors/errors';
 
 export const createTableService = async (productData: CreateTablesDTO): Promise<TablesResponseDTO> => {
@@ -14,7 +15,8 @@ export const createTableService = async (productData: CreateTablesDTO): Promise<
     }
 }
 
-export const getAllTablesService = async (companyId: string): Promise<TablesResponseDTO[]> => {
-    const allTables = await getAllTablesRepository(companyId);
-    return allTables;
+
+export const getAllTablesService = async (companyId: string): Promise<TablesResponseWithMessageDTO> => {
+    const { data, message } = await getAllTablesRepository(companyId);
+    return { data, message };
 }

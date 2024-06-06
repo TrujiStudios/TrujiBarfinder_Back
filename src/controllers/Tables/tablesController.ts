@@ -19,8 +19,12 @@ export const getAllTablesController = async (_req: Request, res: Response): Prom
     try {
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
         const companyId: string = _req.body.company;
-        const resultsTables = await getAllTablesService(companyId);
-        return res.status(200).json({ message: 'All tables', resultsTables });
+        const { data, message } = await getAllTablesService(companyId);
+        return res.status(200).json({
+            msg: 'All tables',
+            message,
+            data
+        });
     } catch (error: unknown) {
         return errorResponse(res, error as Error);
     }

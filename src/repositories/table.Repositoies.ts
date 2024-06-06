@@ -2,7 +2,8 @@ import { Db } from "mongodb";
 import db from "../config/database";
 import { CreateTablesDTO, TablesResponseDTO } from "../models/dtos/tables/tablesDTO";
 import { Table } from "../models/interfaces/tables/tablesInterface";
-import { BadRequest, NotFound } from "../utils/errors/errors";
+import { BadRequest } from "../utils/errors/errors";
+import { TablesResponseWithMessageDTO } from "../types/tables/tables.types";
 
 
 
@@ -42,7 +43,7 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
 }
 
 
-export const getAllTablesRepository = async (companyId: string): Promise<TablesResponseDTO[]> => {
+export const getAllTablesRepository = async (companyId: string): Promise<TablesResponseWithMessageDTO> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
@@ -67,29 +68,22 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
                 }
             }
 
-        ]).toArray();
+        ]).toArray() as Table[];
     const countTables = await dbInstance.collection('tables').countDocuments({ company: companyId });
     console.log(countTables);
 
-    if ((await resultsTable).length === 0 || !resultsTable) {
-        throw new NotFound('Error getting tables');
-    }
+    const data: TablesResponseDTO[] = resultsTable.map((table: Table) => ({
+        id: table._id ? table._id.toHexString() : '',
+        name: table.name,
+        company: table.company,
+        description: table.description,
+        status: table.status,
+        createdAt: table.createdAt,
+        updatedAt: table.updatedAt
+    }));
 
-    //count the number of tables
-    // return {} as TablesResponseDTO[];
-
-    return (await resultsTable as Table[]).map((table: Table) => {
-        countTables;
-        return {
-            id: table._id ? table._id.toHexString() : '',
-            name: table.name,
-            company: table.company,
-            description: table.description,
-            status: table.status,
-            createdAt: table.createdAt,
-            updatedAt: table.updatedAt
-        }
-    });
-
-
+    return {
+        message: `Se Encontraron ${countTables} Mesas`,
+        data
+    };
 }
