@@ -20,6 +20,7 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         company: tableData.company,
         description: tableData.description,
         status: tableData.status,
+        image: '/src/assets/images/barfinder_table_dnd.png',
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -62,6 +63,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
                     name: 1,
                     // company: 1,
                     description: 1,
+                    image: 1,
                     status: 1,
                     createdAt: 1,
                     updatedAt: 1
@@ -77,6 +79,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
         name: table.name,
         company: table.company,
         description: table.description,
+        image: table.image,
         status: table.status,
         createdAt: table.createdAt,
         updatedAt: table.updatedAt
