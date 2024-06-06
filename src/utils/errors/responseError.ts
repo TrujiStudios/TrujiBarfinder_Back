@@ -18,6 +18,19 @@ const errorResponse = (res: Response, error: ErrorWithCode) => {
                 errors: [{ message: error.message || error.errors }],
             });
         }
+        if (error.code === 403) {
+            return res.status(403).json({
+                ok: false,
+                errors: [{ message: error.message || error.errors }],
+            });
+        }
+
+        if (error.code === 404) {
+            return res.status(404).json({
+                ok: false,
+                errors: [{ message: error.message || error.errors }],
+            });
+        }
 
         return res.status(400).json({
             ok: false,
