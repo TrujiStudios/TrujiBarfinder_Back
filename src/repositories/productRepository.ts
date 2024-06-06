@@ -2,6 +2,7 @@ import { CreateProductDTO, ProductResponseDTO, UpdateProductDTO } from "../model
 import { Product, Products } from "../models/interfaces/products/productInterface";
 import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
+import { BadRequest } from "../utils/errors/errors";
 
 
 export const createProductRepository = async (productData: CreateProductDTO): Promise<ProductResponseDTO> => {
@@ -129,54 +130,63 @@ export const updateProductRepository = async (
     updatedData: Partial<UpdateProductDTO>
 ): Promise<ProductResponseDTO | null> => {
 
-    const dbInstance: Db | null = await db;
-    if (!dbInstance) {
-        throw new Error('Database instance is null');
-    }
-    //updatedData.category llega como un array necesito pasar a un string
-    if (updatedData.category) {
-        updatedData.category = updatedData.category.toString();
-    }
-    delete updatedData._id;
-    console.log("Data  2", updatedData);
-    const result = await dbInstance.collection<Products>('products').findOneAndUpdate(
-        {
-            _id: new ObjectId(productId),
-            company: companyId
-        },
-        {
-            $set: {
-                ...updatedData,
-                updatedAt: new Date(),
-                category: new ObjectId(updatedData.category) // Convert category to ObjectId
-            }
-        },
-        {
-            returnDocument: 'after'
+    try {
+        const dbInstance: Db | null = await db;
+        if (!dbInstance) {
+            throw new Error('Database instance is null');
         }
-    );
+        if (Array.isArray(updatedData.category)) updatedData.category = updatedData.category[0];
+        updatedData.category = updatedData.category?.toString() ?? '';
+        delete updatedData._id;
+        const result = await dbInstance.collection<Products>('products').findOneAndUpdate(
+            {
+                _id: new ObjectId(productId),
+                company: companyId
+            },
+            {
+                $set: {
+                    ...updatedData,
+                    updatedAt: new Date(),
+                    category: new ObjectId(updatedData.category) // Convert category to ObjectId
+                }
+            },
+            {
+                returnDocument: 'after'
+            }
+        );
 
-    if (!result) {
-        return null;
+        if (!result) {
+            return null;
+        }
+
+        if (!result) {
+            throw new BadRequest('Product not found');
+        }
+
+        return {
+            _id: result._id.toString(),
+            name: result.name,
+            description: result.description,
+            price: result.price,
+            category: result.category.toString(), // Convert ObjectId to string
+            company: result.company,
+            status: result.status,
+            image: result.image,
+            code: result.code,
+            createdAt: result.createdAt,
+            updatedAt: result.updatedAt
+        };
+
+
+
+
+    } catch (error) {
+        throw new BadRequest('Error updating product: ' + (error as Error).message);
+
+
     }
 
-    if (!result) {
-        throw new Error('Category not found');
-    }
 
-    return {
-        _id: result._id.toString(),
-        name: result.name,
-        description: result.description,
-        price: result.price,
-        category: result.category.toString(), // Convert ObjectId to string
-        company: result.company,
-        status: result.status,
-        image: result.image,
-        code: result.code,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt
-    };
 };
 
 
