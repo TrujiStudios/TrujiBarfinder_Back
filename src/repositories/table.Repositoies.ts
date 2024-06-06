@@ -1,6 +1,6 @@
-import { Db } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import db from "../config/database";
-import { CreateTablesDTO, TablesResponseDTO } from "../models/dtos/tables/tablesDTO";
+import { CreateTablesDTO, TablesResponseDTO, UpdateTablesDTO } from "../models/dtos/tables/tablesDTO";
 import { Table } from "../models/interfaces/tables/tablesInterface";
 import { BadRequest } from "../utils/errors/errors";
 import { TablesResponseWithMessageDTO } from "../types/tables/tables.types";
@@ -87,3 +87,46 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
         data
     };
 }
+
+export const updateTablesRepository = async (
+    companyId: string,
+    tableId: string,
+    updateTable: Partial<UpdateTablesDTO>
+): Promise<TablesResponseDTO> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const updateResult = await dbInstance.collection<Table>('tables').findOneAndUpdate(
+        {
+            _id: new ObjectId(tableId),
+            company: companyId
+        },
+        {
+            $set: {
+                ...updateTable,
+                updatedAt: new Date()
+
+            },
+        },
+        {
+            returnDocument: 'after'
+        }
+    );
+
+    if (!updateResult) {
+        throw new Error('Update result is null');
+    }
+
+    // return {} as TablesResponseDTO;
+    return {
+        _id: updateResult._id.toHexString(),
+        name: updateResult.name,
+        company: updateResult.company,
+        description: updateResult.description,
+        status: updateResult.status,
+        createdAt: updateResult.createdAt,
+        updatedAt: updateResult.updatedAt
+    };
+}  
