@@ -20,7 +20,8 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         company: tableData.company,
         description: tableData.description,
         status: tableData.status,
-        image: '/src/assets/images/barfinder_table_dnd.png',
+        image: tableData.image,
+        // image: '/src/assets/images/barfinder_table_dnd.png',
         createdAt: new Date(),
         updatedAt: new Date()
     });

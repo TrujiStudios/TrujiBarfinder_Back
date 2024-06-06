@@ -16,6 +16,7 @@ export interface CreateTablesDTO {
     name: string;
     company: string;
     status: boolean;
+    image: string;
 }
 
 export interface UpdateTablesDTO {
