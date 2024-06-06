@@ -132,4 +132,25 @@ export const updateTablesRepository = async (
         createdAt: updateResult.createdAt,
         updatedAt: updateResult.updatedAt
     };
-}  
+}
+
+export const deleteTablesRepository = async (companyId: string, tableId: string): Promise<TablesResponseDTO> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const deleteResult = await dbInstance.collection<Table>('tables').deleteOne(
+        {
+            _id: new ObjectId(tableId),
+            company: companyId
+        }
+    );
+
+    if (deleteResult.deletedCount === 0) {
+        throw new BadRequest('Table not found');
+    }
+
+    // return {} as TablesResponseDTO;
+    return deleteResult.deletedCount as unknown as TablesResponseDTO;
+}
