@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middlewares/authentication/auth';
-import { createTablesController, getAllTablesController, updateTablesController } from '../controllers/Tables/tablesController';
+import { createTablesController, deleteTablesController, getAllTablesController, updateTablesController } from '../controllers/Tables/tablesController';
 import { createTablesSchema } from '../utils/validation/tables.Validation';
 import { validate } from '../middlewares/validate';
 
@@ -21,5 +21,8 @@ router.get('/all', authenticateToken, getAllTablesController);
 
 // update table
 router.put('/update/:tableId', authenticateToken, updateTablesController);
+
+// delete table
+router.delete('/delete/:tableId', authenticateToken, deleteTablesController);
 
 export default router;
