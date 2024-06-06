@@ -5,4 +5,5 @@ export const createTablesSchema = Joi.object({
     description: Joi.string().required().trim(),
     status: Joi.boolean().required(),
     image: Joi.string().uri().required(),
+    // image: Joi.string().required()
 });
