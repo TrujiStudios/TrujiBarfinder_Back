@@ -87,7 +87,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
     }));
 
     return {
-        message: `Se Encontraron ${countTables} Mesas`,
+        message: `Cantidad Actual: ${countTables} `,
         data
     };
 }
