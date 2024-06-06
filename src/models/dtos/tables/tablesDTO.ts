@@ -25,7 +25,8 @@ export interface UpdateTablesDTO {
 }
 
 export interface TablesResponseDTO {
-    id: string;
+    _id?: string;
+    id?: string;
     description: string;
     name: string;
     company: string;
