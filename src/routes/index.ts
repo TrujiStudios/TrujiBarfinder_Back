@@ -3,6 +3,7 @@ import auth from './authenticateRouter';
 import company from './companyRouter';
 import product from './productRouter';
 import table from './table.Router';
+import order from './orderRouter';
 
 const router = express.Router();
 
@@ -17,6 +18,9 @@ router.use('/product', product);
 
 // Rutas Tables
 router.use('/tables', table);
+
+// Rutas Orders
+router.use('/orders', order);
 
 
 export default router;
