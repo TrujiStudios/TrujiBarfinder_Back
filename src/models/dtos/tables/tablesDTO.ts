@@ -6,6 +6,7 @@ export interface TablesDTO {
     name: string;
     company: string;
     status: boolean;
+    occupied: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -15,6 +16,7 @@ export interface CreateTablesDTO {
     description: string;
     name: string;
     company: string;
+    occupied: boolean;
     status: boolean;
     image: string;
 }
@@ -23,6 +25,7 @@ export interface UpdateTablesDTO {
     description?: string;
     name?: string;
     status?: boolean;
+    occupied?: boolean;
 }
 
 export interface TablesResponseDTO {
@@ -32,6 +35,7 @@ export interface TablesResponseDTO {
     name: string;
     company: string;
     status: boolean;
+    occupied: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
