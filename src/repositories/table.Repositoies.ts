@@ -21,6 +21,7 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         description: tableData.description,
         status: tableData.status,
         image: tableData.image,
+        occupied: tableData.occupied,
         // image: '/src/assets/images/barfinder_table_dnd.png',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -38,6 +39,7 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         company: tableData.company,
         description: tableData.description,
         status: tableData.status,
+        occupied: tableData.occupied,
         createdAt: new Date(),
         updatedAt: new Date()
     };
@@ -66,6 +68,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
                     description: 1,
                     image: 1,
                     status: 1,
+                    occupied: 1,
                     createdAt: 1,
                     updatedAt: 1
                 }
@@ -81,6 +84,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
         company: table.company,
         description: table.description,
         image: table.image,
+        occupied: table.occupied,
         status: table.status,
         createdAt: table.createdAt,
         updatedAt: table.updatedAt
@@ -129,6 +133,7 @@ export const updateTablesRepository = async (
         name: updateResult.name,
         company: updateResult.company,
         description: updateResult.description,
+        occupied: updateResult.occupied,
         status: updateResult.status,
         createdAt: updateResult.createdAt,
         updatedAt: updateResult.updatedAt
@@ -180,6 +185,7 @@ export const getOneTablesRepository = async (companyId: string, tableId: string)
         name: resultTable.name,
         company: resultTable.company,
         description: resultTable.description,
+        occupied: resultTable.occupied,
         status: resultTable.status,
         createdAt: resultTable.createdAt,
         updatedAt: resultTable.updatedAt
