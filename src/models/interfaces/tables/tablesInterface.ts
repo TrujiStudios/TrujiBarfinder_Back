@@ -9,6 +9,7 @@ export interface Table {
     company: string;
     image?: string;
     status: boolean;
+    occupied: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
