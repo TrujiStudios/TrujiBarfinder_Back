@@ -8,11 +8,13 @@ export const createOrderService = async (
 
     try {
 
-        const total = orderData.products.reduce((acc, product) => {
-            return acc + product.price * product.quantity;
-        }, 0);
+        console.log('orderData', orderData.products[0].productId);
 
-        orderData.total = total;
+        // const total = orderData.products.reduce((acc, product) => {
+        //     return acc + product.price * product.quantity;
+        // }, 0);
+
+        // orderData.total = total;
 
         const newOrder = await createOrderRepository(orderData);
         return newOrder;
