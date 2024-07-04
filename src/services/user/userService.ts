@@ -1,30 +1,27 @@
+import { CreateUserDTO, UserResponseDTO } from "../../models/dtos/user/userDTO";
+import { createUserRepository } from "../../repositories/userRepository";
 
 
-// // import { CreateUserDTO, UpdateUserDTO, UserResponseDTO } from '../interfaces/userInterface';
-// // import { UserModel, IUserModel } from '../models/userModel';
+export const createUserService = async (
+    orderData: CreateUserDTO
+): Promise<UserResponseDTO> => {
 
-// export const createUser = async (data: CreateUserDTO): Promise<UserResponseDTO> => {
-//     const newUser = new UserModel(data);
-//     await newUser.save();
-//     return {
-//         id: newUser.id,
-//         name: newUser.name,
-//         email: newUser.email,
-//         createdAt: newUser.createdAt,
-//         updatedAt: newUser.updatedAt,
-//     };
-// };
+    try {
 
-// export const updateUser = async (
-//     id: string,
-//     data: UpdateUserDTO): Promise<UserResponseDTO | null> => {
-//     const updatedUser = await UserModel.findByIdAndUpdate(id, data, { new: true });
-//     if (!updatedUser) return null;
-//     return {
-//         id: updatedUser.id,
-//         name: updatedUser.name,
-//         email: updatedUser.email,
-//         createdAt: updatedUser.createdAt,
-//         updatedAt: updatedUser.updatedAt,
-//     };
-// };
+        const resultUsers = await createUserRepository(orderData);
+        return resultUsers;
+
+    } catch (error: unknown) {
+        throw new Error('Error creating company: ' + (error as Error).message);
+    }
+}
+
+
+// export const getOrderService = async (companyId: string): Promise<OrderResponseDTO[]> => {
+//     try {
+//         const orders = await getOrderRepository(companyId);
+//         return orders;
+//     } catch (error: unknown) {
+//         throw new Error('Error getting orders: ' + (error as Error).message);
+//     }
+// }
