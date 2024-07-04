@@ -12,7 +12,7 @@ export interface Order {
     updatedAt: Date;
     eliminatedAt: Date;
     products: Array<{
-        productId: string;
+        productId: ObjectId;
         quantity: number;
         price: number;
     }>;
