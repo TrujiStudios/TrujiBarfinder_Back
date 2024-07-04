@@ -64,14 +64,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         throw new Error('Order was not created');
     }
 
-
-
-    // const total = orderData.products.reduce((acc, product) => {
-    //     return acc + product.price * product.quantity;
-    // }, 0);
-
-    // orderData.total = total;
-
     // return {} as OrderResponseDTO;
     return {
         id: resultOrder.insertedId.toString(),
