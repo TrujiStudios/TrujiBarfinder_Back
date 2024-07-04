@@ -4,6 +4,7 @@ import company from './companyRouter';
 import product from './productRouter';
 import table from './table.Router';
 import order from './orderRouter';
+import users from './userRouter';
 
 const router = express.Router();
 
@@ -21,6 +22,9 @@ router.use('/tables', table);
 
 // Rutas Orders
 router.use('/orders', order);
+
+// Rutas Users
+router.use('/users', users);
 
 
 export default router;
