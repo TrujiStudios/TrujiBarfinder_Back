@@ -70,7 +70,7 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         company: orderData.company,
         userId: orderData.userId,
         tableId: orderData.tableId,
-        status: 'pending',
+        status: orderData.status,
         total: orderData.total,
         createdAt: new Date(),
         updatedAt: new Date(),
