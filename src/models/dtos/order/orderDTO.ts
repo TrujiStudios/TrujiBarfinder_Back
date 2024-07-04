@@ -19,14 +19,14 @@
 
 export interface CreateOrderDTO {
     id?: string;
-    companyId: string;
+    company: string;
     userId: string;
     tableId: string;
     status: string;
     total: number;
     createdAt: Date;
     updatedAt: Date;
-    eliminatedAt: Date;
+    // eliminatedAt: Date;
     products: Array<{
         productId: string;
         quantity: number;
@@ -36,14 +36,14 @@ export interface CreateOrderDTO {
 
 export interface OrderResponseDTO {
     id: string;
-    companyId: string;
+    company: string;
     userId: string;
     tableId: string;
     status: string;
     total: number;
     createdAt: Date;
     updatedAt: Date;
-    eliminatedAt: Date;
+    // eliminatedAt: Date;
     products: Array<{
         productId: string;
         quantity: number;
