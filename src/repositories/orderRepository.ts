@@ -32,12 +32,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
                 price: product.price
             }
         }),
-        // products: orderData.products.map(product => {
-        //     return {
-        //         productId: new ObjectId(product.productId),
-        //         quantity: product.quantity,
-        //         price: product.price
-        //     }
         status: 'pending',
         createdAt: new Date(),
         updatedAt: new Date()
