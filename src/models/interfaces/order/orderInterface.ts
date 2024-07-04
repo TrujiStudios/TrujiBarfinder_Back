@@ -10,7 +10,7 @@ export interface Order {
     total: number;
     createdAt: Date;
     updatedAt: Date;
-    eliminatedAt: Date;
+    // eliminatedAt: Date;
     products: Array<{
         productId: ObjectId;
         quantity: number;
