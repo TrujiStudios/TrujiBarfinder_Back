@@ -7,6 +7,17 @@ export const createOrderService = async (
 ): Promise<OrderResponseDTO> => {
 
     try {
+        console.log('orderData', orderData.products[0].price);
+
+        const total = orderData.products.reduce((acc, product) => {
+            return acc + product.price * product.quantity;
+        }, 0);
+
+        orderData.total = total;
+
+
+
+
 
         const newOrder = await createOrderRepository(orderData);
         return newOrder;
