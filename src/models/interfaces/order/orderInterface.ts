@@ -1,10 +1,11 @@
+import { ObjectId } from "mongodb";
 
 
 export interface Order {
     id?: string;
     companyId: string;
-    userId: string;
-    tableId: string;
+    userId: ObjectId;
+    tableId: ObjectId;
     status: string;
     total: number;
     createdAt: Date;
