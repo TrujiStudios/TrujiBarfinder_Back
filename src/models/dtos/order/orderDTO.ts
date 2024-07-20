@@ -35,7 +35,7 @@ export interface CreateOrderDTO {
 }
 
 export interface OrderResponseDTO {
-    id: string;
+    id?: string;
     company: string;
     userId: string;
     tableId: string;
