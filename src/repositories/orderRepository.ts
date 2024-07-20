@@ -1,7 +1,7 @@
 import { Db, ObjectId } from "mongodb";
 import db from "../config/database";
 import { CreateOrderDTO, OrderResponseDTO } from "../models/dtos/order/orderDTO";
-import { Order } from "../models/interfaces/order/orderInterface";
+import { Order, OrderUpdate } from "../models/interfaces/order/orderInterface";
 import { Products } from "../models/interfaces/products/productInterface";
 // import { BadRequest } from "../utils/errors/errors";
 
@@ -23,14 +23,16 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
     }
 
     // Continuar con la lógica original para crear la orden
-    orderData.products = await Promise.all(orderData.products.map(async product => {
-        const resolvedPrice = await productsCollection.findOne({ _id: new ObjectId(product.productId) }).then(product => product?.price);
-        return {
-            ...product,
-            productId: new ObjectId(product.productId).toString(),
-            price: resolvedPrice || 0
-        };
-    })) as { productId: string; quantity: number; price: number; }[];
+    if (orderData.products.length > 0) {
+        orderData.products = await Promise.all(orderData.products.map(async product => {
+            const resolvedPrice = await productsCollection.findOne({ _id: new ObjectId(product.productId) }).then(product => product?.price);
+            return {
+                ...product,
+                productId: new ObjectId(product.productId).toString(),
+                price: resolvedPrice || 0
+            };
+        })) as { productId: string; quantity: number; price: number; }[];
+    }
 
 
     const total = orderData.products.reduce((acc, product) => {
@@ -152,7 +154,128 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
             eliminatedAt: order.eliminatedAt,
             products: order.products,
             table: order.table,
-            user: order.user
+            user: order.user,
+            price: order.price || 0
         } as OrderResponseDTO;
     });
+}
+
+
+// import { ObjectId } from "mongodb";
+
+// export const updateOrderRepository = async (
+//     companyId: string,
+//     orderId: string,
+//     updatedData: Partial<OrderUpdate>
+// ): Promise<OrderResponseDTO> => {
+
+//     const dbInstance: Db | null = await db;
+//     if (!dbInstance) {
+//         throw new Error('Database instance is null');
+//     }
+
+//     const collection = dbInstance.collection<OrderUpdate>('orders');
+
+//     const resultOrder = await collection.findOneAndUpdate(
+//         {
+//             _id: new ObjectId(orderId),
+//             company: companyId
+//         },
+//         {
+//             $set: {
+//                 ...updatedData,
+//                 updatedAt: new Date(),
+//                 userId: new ObjectId(updatedData.userId),
+//                 tableId: new ObjectId(updatedData.tableId),
+//                 products: updatedData.products?.map(product => {
+//                     return {
+//                         productId: new ObjectId(product.productId),
+//                         quantity: product.quantity,
+//                         // price: product.price
+//                     }
+//                 }
+//                 )
+//             }
+//         },
+//     );
+
+//     if (!resultOrder) {
+//         throw new Error('Order not found');
+//     }
+
+//     console.log('resultOrder', resultOrder);
+
+
+
+//     return {} as OrderResponseDTO;
+// }
+
+
+
+
+export const updateOrderRepository = async (
+    companyId: string,
+    orderId: string,
+    updatedData: Partial<OrderUpdate>
+): Promise<OrderResponseDTO> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    // Verificar que cada producto exista en la base de datos
+    const productsCollection = dbInstance.collection<Products>('products');
+    for (const product of updatedData.products || []) {
+        const productId = new ObjectId(product.productId);
+        const productExists = await productsCollection.findOne({ _id: productId });
+        if (!productExists) {
+            throw new Error(`Product with ID ${product.productId} does not exist`);
+        }
+    }
+
+    // Continuar con la lógica original para actualizar la orden
+
+    const collection = dbInstance.collection<Order>('orders');
+    const resultOrder = await collection.findOneAndUpdate(
+        {
+            _id: new ObjectId(orderId),
+            company: companyId
+        },
+        {
+            $set: {
+                ...updatedData,
+                updatedAt: new Date(),
+                userId: new ObjectId(updatedData.userId),
+                tableId: new ObjectId(updatedData.tableId),
+                products: updatedData.products?.map(product => ({
+                    productId: new ObjectId(product.productId),
+                    quantity: product.quantity,
+                    price: product.price || 0 // Asegurar que price no sea undefined
+                }))
+            }
+        },
+    );
+
+    if (!resultOrder) {
+        throw new Error('Order not found');
+    }
+
+    // Calcular el total solo si hay productos
+    let total = 0;
+    if (updatedData.products) {
+        total = updatedData.products.reduce((acc, product) => {
+            // Asegurar que price no sea undefined al calcular el total
+            return acc + (product.price || 0) * product.quantity;
+        }, 0);
+    }
+
+    // Actualizar el total en la base de datos si es necesario
+    // Esta parte del código asume que quieres actualizar el total en la base de datos
+    // Si no es necesario, puedes omitir esta parte o ajustarla según tus necesidades
+    if (total > 0) {
+        await collection.updateOne({ _id: new ObjectId(orderId) }, { $set: { total: total } });
+    }
+
+    return {} as OrderResponseDTO; // Asegúrate de devolver el DTO actualizado correctamente
 }
