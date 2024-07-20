@@ -1,5 +1,6 @@
 import { CreateOrderDTO, OrderResponseDTO } from "../../models/dtos/order/orderDTO";
-import { createOrderRepository, getOrderRepository } from "../../repositories/orderRepository";
+import { OrderUpdate } from "../../models/interfaces/order/orderInterface";
+import { createOrderRepository, getOrderRepository, updateOrderRepository } from "../../repositories/orderRepository";
 
 
 export const createOrderService = async (
@@ -31,5 +32,18 @@ export const getOrderService = async (companyId: string): Promise<OrderResponseD
         return orders;
     } catch (error: unknown) {
         throw new Error('Error getting orders: ' + (error as Error).message);
+    }
+}
+
+export const updateOrderService = async (
+    companyId: string,
+    orderId: string,
+    updatedData: Partial<OrderUpdate>
+): Promise<OrderResponseDTO> => {
+    try {
+        const resultsOrder = await updateOrderRepository(companyId, orderId, updatedData);
+        return resultsOrder;
+    } catch (error: unknown) {
+        throw new Error('Error updating order: ' + (error as Error).message);
     }
 }
