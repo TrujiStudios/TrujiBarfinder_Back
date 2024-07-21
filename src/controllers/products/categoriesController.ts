@@ -21,6 +21,7 @@ export const getCategoriesController = async (_req: Request, res: Response): Pro
     try {
         if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
+        console.log("Session de Categoria");
         const categories = await getCategoriesService(companyId);
         return res.status(200).json(categories);
     } catch (error: unknown) {
