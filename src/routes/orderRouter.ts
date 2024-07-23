@@ -1,12 +1,14 @@
 import express from 'express';
 
 import { authenticateToken } from '../middlewares/authentication/auth';
-import { createOrderController, getOrderController, updateOrderController } from '../controllers/order/orderController';
+import { createOrderController, getOneOrderController, getOrderController, updateOrderController } from '../controllers/order/orderController';
 
 const router = express.Router();
 
 
 router.post('/create', authenticateToken, createOrderController)
+
+router.get('/One/:orderId', authenticateToken, getOneOrderController)
 
 router.get('/all', authenticateToken, getOrderController)
 
