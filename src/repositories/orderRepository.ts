@@ -66,6 +66,18 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         throw new Error('Order was not created');
     }
 
+
+    //actualizar la el documento de tables el campo de occupied a true 
+    const tablesCollection = dbInstance.collection('tables');
+    const tableId = new ObjectId(orderData.tableId);
+    await tablesCollection.updateOne(
+        { _id: tableId },
+        {
+            $set: { occupied: true }
+        }
+    );
+
+
     // return {} as OrderResponseDTO;
     return {
         id: resultOrder.insertedId.toString(),
