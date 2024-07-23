@@ -172,6 +172,80 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
     });
 }
 
+export const getOneOrderRepository = async (companyId: string, orderId: string): Promise<OrderResponseDTO> => {
+
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const resultOrder = await dbInstance.collection<Order>('orders').aggregate(
+        [
+            {
+                $match: {
+                    _id: new ObjectId(orderId),
+                    company: companyId
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'tables',
+                    localField: 'tableId',
+                    foreignField: '_id',
+                    as: 'table'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'products.productId',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $project: {
+                    company: 1,
+                    userId: 1,
+                    tableId: 1,
+                    status: 1,
+                    total: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    products: 1,
+                    table: 1,
+                    user: 1,
+                }
+            }
+        ]
+    ).toArray();
+
+    const order = await resultOrder;
+
+    return {
+        id: order[0]._id,
+        company: order[0].company,
+        userId: order[0].userId,
+        tableId: order[0].tableId,
+        status: order[0].status,
+        total: order[0].total,
+        createdAt: order[0].createdAt,
+        updatedAt: order[0].updatedAt,
+        products: order[0].products,
+        table: order[0].table,
+        user: order[0].user,
+        price: order[0].price || 0
+    } as OrderResponseDTO;
+}
+
 
 // import { ObjectId } from "mongodb";
 
