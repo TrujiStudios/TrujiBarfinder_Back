@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
 import { CreateOrderDTO } from '../../models/dtos/order/orderDTO';
-import { createOrderService, getOrderService, updateOrderService } from '../../services/order/orderServices';
+import { createOrderService, getOneOrderService, getOrderService, updateOrderService } from '../../services/order/orderServices';
 import { Order } from '../../models/interfaces/order/orderInterface';
 
 
@@ -25,6 +25,20 @@ export const getOrderController = async (_req: Request, res: Response): Promise<
     try {
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
         const resultTable = await getOrderService(companyId);
+        return res.status(200).json(resultTable);
+    } catch (error: unknown) {
+        return errorResponse(res, error as Error);
+    }
+}
+
+export const getOneOrderController = async (_req: Request, res: Response): Promise<Response> => {
+
+    const companyId: string = _req.body.company;
+
+    try {
+        if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
+        const orderId: string = _req.params.orderId;
+        const resultTable = await getOneOrderService(companyId, orderId);
         return res.status(200).json(resultTable);
     } catch (error: unknown) {
         return errorResponse(res, error as Error);
