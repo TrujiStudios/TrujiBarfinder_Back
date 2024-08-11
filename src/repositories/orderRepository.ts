@@ -165,6 +165,7 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
             updatedAt: order.updatedAt,
             eliminatedAt: order.eliminatedAt,
             products: order.products,
+            quantity: order.products.quantity,
             table: order.table,
             user: order.user,
             price: order.price || 0
