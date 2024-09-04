@@ -6,89 +6,113 @@ import { Products } from "../models/interfaces/products/productInterface";
 // import { BadRequest } from "../utils/errors/errors";
 
 
+
+
 export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<OrderResponseDTO> => {
     const dbInstance = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
 
-    // Verificar que cada producto exista en la base de datos
+    // Verificar que cada producto exista en la base de datos y obtener su precio
     const productsCollection = dbInstance.collection<Products>('products');
-    for (const product of orderData.products) {
+    const resolvedProducts = await Promise.all(orderData.products.map(async product => {
         const productId = new ObjectId(product.productId);
-        const productExists = await productsCollection.findOne({ _id: productId });
-        if (!productExists) {
+        const productData = await productsCollection.findOne({ _id: productId });
+        if (!productData) {
             throw new Error(`Product with ID ${product.productId} does not exist`);
         }
-    }
+        return {
+            ...product,
+            productId: productId,
+            price: productData.price
+        };
+    }));
 
-    // Continuar con la lógica original para crear la orden
-    if (orderData.products.length > 0) {
-        orderData.products = await Promise.all(orderData.products.map(async product => {
-            const resolvedPrice = await productsCollection.findOne({ _id: new ObjectId(product.productId) }).then(product => product?.price);
-            return {
-                ...product,
-                productId: new ObjectId(product.productId).toString(),
-                price: resolvedPrice || 0
-            };
-        })) as { productId: string; quantity: number; price: number; }[];
-    }
-
-
-    const total = orderData.products.reduce((acc, product) => {
-        return acc + product.price * product.quantity;
-    }, 0);
-
-    orderData.total = total;
-
-    const collection = dbInstance.collection<Order>('orders');
-    const resultOrder = await collection.insertOne({
-        ...orderData,
+    // Verificar si la mesa ya tiene una orden existente
+    const ordersCollection = dbInstance.collection<Order>('orders');
+    const existingOrder = await ordersCollection.findOne({
         tableId: new ObjectId(orderData.tableId),
-        userId: new ObjectId(orderData.userId),
-        products: orderData.products.map(product => {
-            return {
-                productId: new ObjectId(product.productId),
-                quantity: product.quantity,
-                // price: product.price,
-                price: product.price || 0
-
-            }
-        }),
-        status: 'pending',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        companyId: orderData.company,
-        // eliminatedAt: undefined
+        status: 'pending'
     });
 
-    if (resultOrder.acknowledged === false) {
-        throw new Error('Order was not created');
-    }
+    if (existingOrder) {
+        // Agregar los nuevos productos a la orden existente
+        const updatedProducts = [...existingOrder.products, ...resolvedProducts];
+        const total = updatedProducts.reduce((acc, product) => {
+            return acc + product.price * product.quantity;
+        }, 0);
 
+        await ordersCollection.updateOne(
+            { _id: existingOrder._id },
+            {
+                $set: {
+                    products: updatedProducts,
+                    total: total,
+                    updatedAt: new Date()
+                }
+            }
+        );
 
-    //actualizar la el documento de tables el campo de occupied a true 
-    const tablesCollection = dbInstance.collection('tables');
-    const tableId = new ObjectId(orderData.tableId);
-    await tablesCollection.updateOne(
-        { _id: tableId },
-        {
-            $set: { occupied: true }
+        return {
+            id: existingOrder._id.toString(),
+            company: existingOrder.companyId,
+            userId: existingOrder.userId,
+            tableId: existingOrder.tableId,
+            status: existingOrder.status,
+            total: total,
+            createdAt: existingOrder.createdAt,
+            updatedAt: new Date(),
+            products: updatedProducts
+        } as unknown as OrderResponseDTO;
+    } else {
+        // Continuar con la lógica original para crear una nueva orden
+        const total = resolvedProducts.reduce((acc, product) => {
+            return acc + product.price * product.quantity;
+        }, 0);
+
+        orderData.total = total;
+
+        const resultOrder = await ordersCollection.insertOne({
+            ...orderData,
+            tableId: new ObjectId(orderData.tableId),
+            userId: new ObjectId(orderData.userId),
+            products: resolvedProducts.map(product => ({
+                productId: product.productId,
+                quantity: product.quantity,
+                price: product.price
+            })),
+            status: 'pending',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            companyId: orderData.company,
+        });
+
+        if (resultOrder.acknowledged === false) {
+            throw new Error('Order was not created');
         }
-    );
 
+        // Actualizar el documento de tables el campo de occupied a true
+        const tablesCollection = dbInstance.collection('tables');
+        const tableId = new ObjectId(orderData.tableId);
+        await tablesCollection.updateOne(
+            { _id: tableId },
+            {
+                $set: { occupied: true }
+            }
+        );
 
-    // return {} as OrderResponseDTO;
-    return {
-        id: resultOrder.insertedId.toString(),
-        company: orderData.company,
-        userId: orderData.userId,
-        tableId: orderData.tableId,
-        status: orderData.status,
-        total: orderData.total,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        products: orderData.products,
+        return {
+            id: resultOrder.insertedId.toString(),
+            company: orderData.company,
+            userId: orderData.userId,
+            tableId: orderData.tableId,
+            status: 'pending',
+            total: orderData.total,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            products: resolvedProducts,
+        } as unknown as OrderResponseDTO;
     }
 }
 
@@ -229,21 +253,26 @@ export const getOneOrderRepository = async (companyId: string, orderId: string):
         ]
     ).toArray();
 
-    const order = await resultOrder;
+    if (resultOrder.length === 0) {
+        throw new Error('Order not found');
+    }
+
+    const order = resultOrder[0];
 
     return {
-        id: order[0]._id,
-        company: order[0].company,
-        userId: order[0].userId,
-        tableId: order[0].tableId,
-        status: order[0].status,
-        total: order[0].total,
-        createdAt: order[0].createdAt,
-        updatedAt: order[0].updatedAt,
-        products: order[0].products,
-        table: order[0].table,
-        user: order[0].user,
-        price: order[0].price || 0
+        id: order._id.toString(), // Convertir ObjectId a string
+        company: order.company,
+        userId: order.userId,
+        tableId: order.tableId,
+        status: order.status,
+        total: order.total,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        eliminatedAt: order.eliminatedAt,
+        products: order.products,
+        table: order.table,
+        user: order.user,
+        price: order.price || 0
     } as OrderResponseDTO;
 }
 
