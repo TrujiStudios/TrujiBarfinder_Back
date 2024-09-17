@@ -122,7 +122,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
 
 
 export const getOrderRepository = async (companyId: string): Promise<OrderResponseDTO[]> => {
-
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
@@ -156,7 +155,7 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
                     from: 'products',
                     localField: 'products.productId',
                     foreignField: '_id',
-                    as: 'products'
+                    as: 'productos'
                 }
             },
             {
@@ -169,6 +168,11 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
                     createdAt: 1,
                     updatedAt: 1,
                     products: 1,
+                    productos: {
+                        _id: 1,
+                        name: 1,
+                        price: 1
+                    },
                     table: 1,
                     user: 1,
                 }
@@ -176,26 +180,70 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
         ]
     ).toArray();
 
+    return resultsOrders.map(order => {
+        // Agrupar productos por productId y sumar cantidad y precio
+        const groupedProducts = order.products.reduce((acc: any, product: any) => {
+            const existingProduct = acc.find((p: any) => p.productId.toString() === product.productId.toString());
+            if (existingProduct) {
+                // Si ya existe el producto, sumar la cantidad
+                existingProduct.quantity += product.quantity;
+            } else {
+                // Si no existe, agregarlo al acumulador
+                const productDetails = order.productos.find((p: any) => p._id.toString() === product.productId.toString());
+                acc.push({
+                    ...product,
+                    name: productDetails ? productDetails.name : 'Unknown',
+                    price: productDetails ? productDetails.price : 0
+                });
+            }
+            return acc;
+        }, []);
 
-    return (await resultsOrders).map(order => {
+        // Calcular el total de la orden sumando los precios de los productos agrupados
+        const totalPrice = groupedProducts.reduce((sum: number, product: any) => {
+            return sum + (product.price * product.quantity);
+        }, 0);
+
         return {
-            id: order._id,
+            id: order._id.toString(), // Convertir ObjectId a string
             company: order.company,
             userId: order.userId,
             tableId: order.tableId,
             status: order.status,
-            total: order.total,
+            total: totalPrice, // Usar el total calculado
             createdAt: order.createdAt,
             updatedAt: order.updatedAt,
             eliminatedAt: order.eliminatedAt,
-            products: order.products,
-            quantity: order.products.quantity,
+            products: groupedProducts, // Usar los productos agrupados
             table: order.table,
             user: order.user,
-            price: order.price || 0
         } as OrderResponseDTO;
     });
 }
+
+
+
+
+
+// return (await resultsOrders).map(order => {
+//     return {
+//         id: order._id,
+//         company: order.company,
+//         userId: order.userId,
+//         tableId: order.tableId,
+//         status: order.status,
+//         total: order.total,
+//         createdAt: order.createdAt,
+//         updatedAt: order.updatedAt,
+//         eliminatedAt: order.eliminatedAt,
+//         products: order.products,
+//         quantity: order.products.quantity,
+//         table: order.table,
+//         user: order.user,
+//         price: order.price || 0
+//     } as OrderResponseDTO;
+// });
+
 
 export const getOneOrderRepository = async (companyId: string, orderId: string): Promise<OrderResponseDTO> => {
     const dbInstance: Db | null = await db;
