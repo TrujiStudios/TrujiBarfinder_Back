@@ -198,7 +198,6 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
 }
 
 export const getOneOrderRepository = async (companyId: string, orderId: string): Promise<OrderResponseDTO> => {
-
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
@@ -233,7 +232,7 @@ export const getOneOrderRepository = async (companyId: string, orderId: string):
                     from: 'products',
                     localField: 'products.productId',
                     foreignField: '_id',
-                    as: 'products'
+                    as: 'productos'
                 }
             },
             {
@@ -246,6 +245,7 @@ export const getOneOrderRepository = async (companyId: string, orderId: string):
                     createdAt: 1,
                     updatedAt: 1,
                     products: 1,
+                    productos: 1,
                     table: 1,
                     user: 1,
                 }
@@ -259,22 +259,42 @@ export const getOneOrderRepository = async (companyId: string, orderId: string):
 
     const order = resultOrder[0];
 
+    // Agrupar productos por productId y sumar cantidad y precio
+    const groupedProducts = order.products.reduce((acc: any, product: any) => {
+        const existingProduct = acc.find((p: any) => p.productId.toString() === product.productId.toString());
+        if (existingProduct) {
+            // Si ya existe el producto, sumar la cantidad y el precio
+            existingProduct.quantity += product.quantity;
+            // existingProduct.price += product.price;
+        } else {
+            // Si no existe, agregarlo al acumulador
+            acc.push({ ...product });
+        }
+        return acc;
+    }, []);
+
+    // Calcular el total de la orden sumando los precios de los productos agrupados
+    const totalPrice = groupedProducts.reduce((sum: number, product: any) => {
+        return sum + (product.price * product.quantity);
+    }, 0);
+
     return {
         id: order._id.toString(), // Convertir ObjectId a string
         company: order.company,
         userId: order.userId,
         tableId: order.tableId,
         status: order.status,
-        total: order.total,
+        total: totalPrice, // Usar el total calculado
+        // total: order.total,
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
         eliminatedAt: order.eliminatedAt,
-        products: order.products,
+        products: groupedProducts, // Usar los productos agrupados
         table: order.table,
         user: order.user,
-        price: order.price || 0
     } as OrderResponseDTO;
-}
+};
+
 
 
 // import { ObjectId } from "mongodb";
