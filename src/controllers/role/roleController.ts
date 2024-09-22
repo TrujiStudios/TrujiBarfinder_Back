@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
-import { RoleDTO } from '../../models/dtos/role/roleDTO';
-import { createRoleService, getRoleService } from '../../services/role/roleService';
+import { PermissionDTO, RoleDTO } from '../../models/dtos/role/roleDTO';
+import { createPermissionService, createRoleService, getRoleService } from '../../services/role/roleService';
 
 
 
@@ -24,6 +24,19 @@ export const getRoleController = async (_req: Request, res: Response): Promise<R
         const resultRole = await getRoleService(companyId);
         return res.status(200).json(resultRole);
 
+    } catch (error: unknown) {
+        return errorResponse(res, error as Error);
+    }
+}
+
+// createPermission 
+
+export const createPermissionController = async (_req: Request, res: Response): Promise<Response> => {
+    const role: PermissionDTO = _req.body;
+    try {
+        if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
+        const resultRole = await createPermissionService(role);
+        return res.status(201).json(resultRole);
     } catch (error: unknown) {
         return errorResponse(res, error as Error);
     }
