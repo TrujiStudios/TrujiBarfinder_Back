@@ -4,6 +4,7 @@ import db from '../config/database';
 import { ICompany } from '../models/interfaces/auth/authInterface';
 import { CompanyResponseDTO } from '../models/dtos/company/companyDTO';
 import { ObjectId } from 'mongodb'; // Add this import
+import { UserResponseDTO } from '../models/dtos/user/userDTO';
 // import { CompanyResponseLoginDTO } from '../dtos/companyDTO';
 
 
@@ -32,6 +33,22 @@ export const byEmailcompanyRepository = async (email: string): Promise<CompanyRe
 
     return company;
 };
+
+export const byEmailUserRepository = async (email: string): Promise<UserResponseDTO | null> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+    const collection = dbInstance.collection<any>('users');
+    const user = await collection.findOne({ email });
+
+    if (!user) {
+        throw new Error('User does not exist');
+    }
+
+    return user;
+};
+
 
 export const findCompanyByIdRepository = async (companyId: string): Promise<CompanyResponseDTO | null> => {
     const dbInstance: Db | null = await db;

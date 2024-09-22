@@ -10,6 +10,7 @@ export const createOrderController = async (_req: Request, res: Response): Promi
     const tableData: CreateOrderDTO = _req.body;
     try {
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
+        // const userId: string = _req.body.company;
         console.log("CREATE ORDER");
         const resultTable = await createOrderService(tableData);
         return res.status(201).json(resultTable);

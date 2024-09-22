@@ -7,70 +7,84 @@ import { environment } from '../../config/environment';
 import { Payload } from '../../models/dtos/company/companyDTO';
 import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
+import { findUserByEmailService } from '../../services/user/userService';
 
 
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-
     try {
-
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1]; // Formato esperado: "Bearer <token>"
 
+        // Verificar si hay un token en las cookies o en la cabecera de autorización
         if (!req.cookies.TrujiStudios && !token) {
             throw new Unauthorized('Token not provided');
         }
-        const payload = validateToken(req.cookies.TrujiStudios);
 
+        // Validar el token
+        const payload = validateToken(req.cookies.TrujiStudios || token);
         if (!payload) {
             throw new Unauthorized('Invalid token');
         }
 
-        const authIsAutehnticated = await authSession(req.session.isAutehnticated || false);
-        if (!authIsAutehnticated) throw new Unauthorized('Session not active');
-        //verificar el id del usuario 
-        // const company = await findCompanyByIdRepository(payload.id);
+        // Verificar si la sesión está autenticada
+        const authIsAuthenticated = await authSession(req.session.isAutehnticated || false);
+        if (!authIsAuthenticated) throw new Unauthorized('Session not active');
 
+        // Verificar el `companyId` del token y asignarlo al request
+        req.body.company = new ObjectId(payload.sub);  // El `sub` del payload es el `companyId` o `userId`
+        // req.body.company = new ObjectId(payload.company);  // El `sub` del payload es el `companyId` o `userId`
 
-        req.body.company = new ObjectId(payload.sub);
-        console.log('Token decodificado:', req.body.company);
-        console.log('isAutehnticated ', req.session.isAutehnticated);
-        // console.log('cOMAPNY ', req.session.company);
-
-
-
-        if (!req.session.company) {
-            console.log('Sesión inactiva');
+        // Si la sesión no tiene información sobre la compañía o el usuario, lanzar un error
+        if (!req.session.company && !req.session.user) {
             throw new Unauthorized('Session not active');
         }
 
-        if (!req.session.company.email || !req.session.company.password) {
-            console.log('Sesión inactiva');
-            throw new Unauthorized('Session not active');
+        // Verificar si los datos de sesión son válidos (para compañía o usuario)
+        if (req.session.company) {
+            // Verificar la sesión de la compañía
+            if (!req.session.company.email || !req.session.company.password) {
+                throw new Unauthorized('Session not active');
+            }
+
+            // Verificar que la sesión de la compañía esté activa
+            const sessionCompany = await findCompanyByEmailServiceFixed(req.session.company.email, req.session.company.password);
+            if (!sessionCompany) throw new Unauthorized('Session not active');
+
+            // Si la sesión es válida, continuar con la siguiente función
+            if (req.session.company.email === sessionCompany.email && req.session.token) {
+                console.log('Sesión de compañía activa');
+                next();
+                return;
+            }
+        } else if (req.session.user) {
+            // Verificar la sesión del usuario
+            if (!req.session.user.email || !req.session.user.password) {
+                throw new Unauthorized('Session not active');
+            }
+
+            // Verificar que la sesión del usuario esté activa (debe estar asociada a la misma compañía)
+            const sessionUser = await findUserByEmailService(req.session.user.email);
+            if (!sessionUser || sessionUser.company !== sessionUser.company) {
+                throw new Unauthorized('Session not active');
+            }
+
+            // Si la sesión es válida, continuar con la siguiente función
+            if (req.session.user.email === sessionUser.email && req.session.token) {
+                console.log('Sesión de usuario activa');
+                next();
+                return;
+            }
         }
 
-        const sessioncompany = await findCompanyByEmailServiceFixed(req.session.company.email, req.session.company.password);
-
-        if (!sessioncompany) throw new Unauthorized('Session not active');
-
-        if (req.session && req.session.company && req.session.company.email === sessioncompany.email && req.session.token) {
-            console.log('Sesión activa');
-            next();
-            return;
-        }
-        else {
-            console.log('Sesión inactiva');
-            throw new Unauthorized('Session not active');
-        }
-
-
+        // Si ninguna de las sesiones es válida, lanzar un error
+        throw new Unauthorized('Session not active');
 
     } catch (error: unknown) {
         return errorResponse(res, error as Error);
-
     }
-
 };
+
 
 
 export const validateToken = (token: string): Payload | null => {

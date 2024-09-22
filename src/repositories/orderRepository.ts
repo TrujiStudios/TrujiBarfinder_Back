@@ -48,6 +48,7 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
             {
                 $set: {
                     products: updatedProducts,
+                    userId: new ObjectId(orderData.company),
                     total: total,
                     updatedAt: new Date()
                 }
@@ -76,11 +77,12 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         const resultOrder = await ordersCollection.insertOne({
             ...orderData,
             tableId: new ObjectId(orderData.tableId),
-            userId: new ObjectId(orderData.userId),
+            userId: new ObjectId(orderData.company),
             products: resolvedProducts.map(product => ({
                 productId: product.productId,
                 quantity: product.quantity,
-                price: product.price
+                price: product.price,
+                userId: new ObjectId(orderData.company),
             })),
             status: 'pending',
             createdAt: new Date(),
@@ -105,7 +107,7 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         return {
             id: resultOrder.insertedId.toString(),
             company: orderData.company,
-            userId: orderData.userId,
+            userId: orderData.company,
             tableId: orderData.tableId,
             status: 'pending',
             total: orderData.total,
@@ -193,7 +195,8 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
                 acc.push({
                     ...product,
                     name: productDetails ? productDetails.name : 'Unknown',
-                    price: productDetails ? productDetails.price : 0
+                    price: productDetails ? productDetails.price : 0,
+                    user: order.user[0] ? order.user[0].name : 'Unknown',
                 });
             }
             return acc;
@@ -216,7 +219,7 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
             eliminatedAt: order.eliminatedAt,
             products: groupedProducts, // Usar los productos agrupados
             table: order.table,
-            user: order.user,
+            userName: order.user[0] ? order.user[0].name : 'Unknown',
         } as OrderResponseDTO;
     });
 }

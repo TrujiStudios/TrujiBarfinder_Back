@@ -15,6 +15,7 @@ export interface CreateUserDTO {
 
 export interface UserResponseDTO {
     id: string;
+    _id: string;
     name: string;
     lastName: string;
     documentType: string;
@@ -23,6 +24,8 @@ export interface UserResponseDTO {
     password: string;
     phone: string;
     role: string;
+    companyId: string;
+    company?: string;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;

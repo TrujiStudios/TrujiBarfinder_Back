@@ -26,7 +26,9 @@ export const createUserRepository = async (userData: CreateUserDTO): Promise<Use
 
     return {
         id: resultUser.insertedId.toString(),
+        _id: resultUser.insertedId.toString(),
         ...userData,
+        companyId: '',
         createdAt: new Date(),
         updatedAt: new Date(),
     };

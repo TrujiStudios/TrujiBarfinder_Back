@@ -39,6 +39,7 @@ export interface Payload {
     password?: string;
     sub?: string | undefined;
     token?: string;
+    company?: string;
 }
 
 
