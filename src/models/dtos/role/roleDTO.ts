@@ -4,19 +4,20 @@ export interface RoleDTO {
     // _id?: string;
     name: string;
     company: string;
-    // permissions: PermissionDTO[];
+    permissions: string[];
 }
 
 export interface PermissionDTO {
+    _id: string;
     name: string;
-    description: string;
+    // company: string;
 }
 
 export interface RoleResponseDTO {
     _id: string;
     name: string;
     company: string;
-    // permissions: PermissionDTO[];
+    permissions: PermissionDTO[];
     createdAt: Date;
     updatedAt: Date;
 }
