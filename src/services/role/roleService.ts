@@ -1,6 +1,6 @@
 
-import { RoleDTO, RoleResponseDTO } from '../../models/dtos/role/roleDTO';
-import { createRoleRepository, getRoleRepository } from '../../repositories/roleRepository';
+import { PermissionDTO, RoleDTO, RoleResponseDTO } from '../../models/dtos/role/roleDTO';
+import { createPermissionRepository, createRoleRepository, getRoleRepository } from '../../repositories/roleRepository';
 import { BadRequest } from '../../utils/errors/errors';
 
 export const createRoleService = async (productData: RoleDTO): Promise<RoleResponseDTO> => {
@@ -20,4 +20,21 @@ export const getRoleService = async (
 ): Promise<RoleResponseDTO[]> => {
     const roleResult = await getRoleRepository(companyId);
     return roleResult;
+}
+
+
+export const createPermissionService = async (productData: PermissionDTO): Promise<RoleResponseDTO> => {
+
+    try {
+        // const permissionData: PermissionDTO = {
+        //     ...productData,
+        //     description: 'Default description' // Add a default description or get it from productData if available
+        // };
+
+        const newRole = await createPermissionRepository(productData);
+        return newRole;
+
+    } catch (error: unknown) {
+        throw new BadRequest('Error creating Role: ' + (error as Error).message);
+    }
 }
