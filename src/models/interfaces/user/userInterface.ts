@@ -1,3 +1,4 @@
+import { Role } from "../role/roleInteface";
 
 export interface User {
     id?: string;
@@ -8,7 +9,7 @@ export interface User {
     email: string;
     password: string;
     phone: string;
-    role: string;
+    role: Role[];
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
