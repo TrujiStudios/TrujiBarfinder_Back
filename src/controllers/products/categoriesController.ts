@@ -7,7 +7,7 @@ import { Category } from '../../models/interfaces/products/categoryInterface';
 export const createCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     const categoryData: CreateCategoryDTO = _req.body;
     try {
-        if (!_req.session.isAutehnticated) throw new Error('Session not active');
+        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const newCategory = await createCategoryService(categoryData);
         return res.status(201).json(newCategory);
     } catch (error: unknown) {
@@ -19,8 +19,9 @@ export const createCategoryController = async (_req: Request, res: Response): Pr
 export const getCategoriesController = async (_req: Request, res: Response): Promise<Response> => {
 
     try {
-        if (!_req.session.isAutehnticated) throw new Error('Session not active');
+        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
+        console.log("Session de Categoria");
         const categories = await getCategoriesService(companyId);
         return res.status(200).json(categories);
     } catch (error: unknown) {
@@ -31,7 +32,7 @@ export const getCategoriesController = async (_req: Request, res: Response): Pro
 
 export const updateCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     try {
-        if (!_req.session.isAutehnticated) throw new Error('Session not active');
+        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
         const categoryId: string = _req.params.categoryId;
         const updatedData: Partial<Category> = _req.body;
@@ -44,7 +45,7 @@ export const updateCategoryController = async (_req: Request, res: Response): Pr
 
 export const deleteCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     try {
-        if (!_req.session.isAutehnticated) throw new Error('Session not active');
+        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
         const categoryId: string = _req.params.categoryId;
         const categories = await deleteCategoriesService(companyId, categoryId)

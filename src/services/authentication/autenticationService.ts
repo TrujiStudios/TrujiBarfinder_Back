@@ -1,7 +1,8 @@
 import { CreateCompanyDTO, CompanyResponseDTO, Payload } from '../../models/dtos/company/companyDTO';
+import { UserResponseDTO } from '../../models/dtos/user/userDTO';
 // import { ICompany } from '../../interfaces/companyInterface';
 import { createCompanyRepository } from '../../repositories/authRepositories';
-import { byEmailcompanyRepository, findCompanyByEmailRepository } from '../../repositories/companyRepositories';
+import { byEmailcompanyRepository, byEmailUserRepository, findCompanyByEmailRepository } from '../../repositories/companyRepositories';
 import { createToken } from '../../utils/createToken';
 import { comparePassword, encrypt } from '../../utils/encrypt';
 
@@ -82,6 +83,40 @@ export const authLoginCompanyServices = async (companyData: Payload): Promise<{ 
         throw new Error('Error creating company: ' + (error as Error).message);
     }
 }
+
+export const authLoginUserServices = async (userData: Payload): Promise<{ user: UserResponseDTO, token: string }> => {
+    try {
+        if (!userData.email) {
+            throw new Error('Email is required');
+        }
+
+        const existingUser = await byEmailUserRepository(userData.email);
+
+        if (!existingUser) {
+            throw new Error('User does not exist');
+        }
+
+        if (!existingUser.password) {
+            throw new Error('Password is required');
+        }
+
+        if (!userData.password) {
+            throw new Error('Password is required');
+        }
+
+        await comparePassword(userData.password, existingUser.password);
+
+        const token = await createToken({ sub: existingUser._id } as unknown as Payload);
+        console.log('token', token);
+        return {
+            user: existingUser,
+            token
+        };
+    } catch (error) {
+        throw new Error('Error logging in user: ' + (error as Error).message);
+    }
+};
+
 
 
 

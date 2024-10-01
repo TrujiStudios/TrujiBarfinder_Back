@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middlewares/authentication/auth';
-import { createTablesController, deleteTablesController, getAllTablesController, updateTablesController } from '../controllers/Tables/tablesController';
+import { createTablesController, deleteTablesController, getAllTablesController, getOneTablesController, updateTablesController } from '../controllers/Tables/tablesController';
 import { createTablesSchema } from '../utils/validation/tables.Validation';
 import { validate } from '../middlewares/validate';
 
@@ -18,6 +18,8 @@ router.post('/create',
 
 // get all tables
 router.get('/all', authenticateToken, getAllTablesController);
+
+router.get('/One/:tableId', authenticateToken, getOneTablesController);
 
 // update table
 router.put('/update/:tableId', authenticateToken, updateTablesController);

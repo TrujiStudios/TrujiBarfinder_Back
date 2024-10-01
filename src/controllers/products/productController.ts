@@ -23,6 +23,7 @@ export const getProductsController = async (_req: Request, res: Response): Promi
 
     try {
         if (!_req.session.isAutehnticated) throw new Error('Session not activee');
+        console.log("Modulo de Producto");
         const products = await getProductsService(companyId);
         return res.status(200).json(products);
     } catch (error: unknown) {

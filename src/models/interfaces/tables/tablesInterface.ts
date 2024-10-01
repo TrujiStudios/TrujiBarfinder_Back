@@ -7,8 +7,9 @@ export interface Table {
     description: string;
     name: string;
     company: string;
-    image: string;
+    image?: string;
     status: boolean;
+    occupied: boolean;
     createdAt: Date;
     updatedAt: Date;
 }

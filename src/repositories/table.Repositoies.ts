@@ -20,7 +20,9 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         company: tableData.company,
         description: tableData.description,
         status: tableData.status,
-        image: '/src/assets/images/barfinder_table_dnd.png',
+        image: tableData.image,
+        occupied: tableData.occupied,
+        // image: '/src/assets/images/barfinder_table_dnd.png',
         createdAt: new Date(),
         updatedAt: new Date()
     });
@@ -37,6 +39,7 @@ export const createTableRepository = async (tableData: CreateTablesDTO): Promise
         company: tableData.company,
         description: tableData.description,
         status: tableData.status,
+        occupied: tableData.occupied,
         createdAt: new Date(),
         updatedAt: new Date()
     };
@@ -65,6 +68,7 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
                     description: 1,
                     image: 1,
                     status: 1,
+                    occupied: 1,
                     createdAt: 1,
                     updatedAt: 1
                 }
@@ -80,13 +84,14 @@ export const getAllTablesRepository = async (companyId: string): Promise<TablesR
         company: table.company,
         description: table.description,
         image: table.image,
+        occupied: table.occupied,
         status: table.status,
         createdAt: table.createdAt,
         updatedAt: table.updatedAt
     }));
 
     return {
-        message: `Se Encontraron ${countTables} Mesas`,
+        message: `Cantidad Actual: ${countTables} `,
         data
     };
 }
@@ -128,6 +133,7 @@ export const updateTablesRepository = async (
         name: updateResult.name,
         company: updateResult.company,
         description: updateResult.description,
+        occupied: updateResult.occupied,
         status: updateResult.status,
         createdAt: updateResult.createdAt,
         updatedAt: updateResult.updatedAt
@@ -153,4 +159,35 @@ export const deleteTablesRepository = async (companyId: string, tableId: string)
 
     // return {} as TablesResponseDTO;
     return deleteResult.deletedCount as unknown as TablesResponseDTO;
+}
+
+
+export const getOneTablesRepository = async (companyId: string, tableId: string): Promise<TablesResponseDTO> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    const resultTable = await dbInstance.collection<Table>('tables').findOne(
+        {
+            _id: new ObjectId(tableId),
+            company: companyId
+        }
+    );
+
+    if (!resultTable) {
+        throw new BadRequest('Table not found');
+    }
+
+    // return {} as TablesResponseDTO;
+    return {
+        _id: resultTable._id.toHexString(),
+        name: resultTable.name,
+        company: resultTable.company,
+        description: resultTable.description,
+        occupied: resultTable.occupied,
+        status: resultTable.status,
+        createdAt: resultTable.createdAt,
+        updatedAt: resultTable.updatedAt
+    };
 }

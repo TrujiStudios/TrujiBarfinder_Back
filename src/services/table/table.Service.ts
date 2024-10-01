@@ -1,5 +1,5 @@
 import { CreateTablesDTO, TablesResponseDTO, UpdateTablesDTO } from '../../models/dtos/tables/tablesDTO';
-import { createTableRepository, deleteTablesRepository, getAllTablesRepository, updateTablesRepository } from '../../repositories/table.Repositoies';
+import { createTableRepository, deleteTablesRepository, getAllTablesRepository, getOneTablesRepository, updateTablesRepository } from '../../repositories/table.Repositoies';
 import { TablesResponseWithMessageDTO } from '../../types/tables/tables.types';
 import { BadRequest } from '../../utils/errors/errors';
 
@@ -38,5 +38,14 @@ export const deleteTablesServices = async (
     tableId: string
 ): Promise<TablesResponseDTO> => {
     const results = await deleteTablesRepository(companyId, tableId);
+    return results;
+}
+
+
+export const getOneTablesServices = async (
+    companyId: string,
+    tableId: string
+): Promise<TablesResponseDTO> => {
+    const results = await getOneTablesRepository(companyId, tableId);
     return results;
 }
