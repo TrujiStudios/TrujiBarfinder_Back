@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticateToken } from '../middlewares/authentication/auth';
 // import { createTablesSchema } from '../utils/validation/tables.Validation';
 // import { validate } from '../middlewares/validate';
-import { createPermissionController, createRleController, getRoleController } from '../controllers/role/roleController';
+import { accessModuleController, createPermissionController, createRleController, getRoleController } from '../controllers/role/roleController';
 
 
 
@@ -17,6 +17,9 @@ router.get('/get', authenticateToken, getRoleController);
 
 // // create permission
 router.post('/createPermission', authenticateToken, createPermissionController);
+
+// verificar si se puede acceder a un modulo
+router.get('/accessModule/:id', authenticateToken, accessModuleController);
 
 
 export default router;

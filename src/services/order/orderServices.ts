@@ -1,6 +1,7 @@
 import { CreateOrderDTO, OrderResponseDTO } from "../../models/dtos/order/orderDTO";
 import { OrderUpdate } from "../../models/interfaces/order/orderInterface";
 import { createOrderRepository, getOneOrderRepository, getOrderRepository, updateOrderRepository } from "../../repositories/orderRepository";
+import { accessModuleService } from "../role/roleService";
 
 
 export const createOrderService = async (
@@ -28,6 +29,13 @@ export const createOrderService = async (
 
 export const getOrderService = async (companyId: string): Promise<OrderResponseDTO[]> => {
     try {
+        const module = 'order';
+        const userId = '670d74c14d5d518e3dfa34d4'; // This should be dynamic
+        const result = await accessModuleService(companyId, userId, module);
+
+
+        console.log('result', result);
+
         const orders = await getOrderRepository(companyId);
         return orders;
     } catch (error: unknown) {
