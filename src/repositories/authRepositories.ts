@@ -38,10 +38,11 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
         throw new Error('Company was not created');
     }
 
-    await createPlantillaRolAdminRepository(resultCompany.insertedId.toString());
+    const result = await createPlantillaRolAdminRepository(resultCompany.insertedId.toString());
     await createPlantillaRolUserRepository(resultCompany.insertedId.toString());
 
-    // return {} as CompanyResponseDTO;
+    await collection.updateOne({ _id: resultCompany.insertedId }, { $set: { roleId: result.insertedIds[0] } });
+
 
     return {
         id: resultCompany.insertedId.toString(),
