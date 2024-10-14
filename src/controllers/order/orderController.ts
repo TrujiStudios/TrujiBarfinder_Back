@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { Unauthorized } from '../../utils/errors/errors';
+import { BadRequest, Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
 import { CreateOrderDTO } from '../../models/dtos/order/orderDTO';
 import { createOrderService, getOneOrderService, getOrderService, updateOrderService } from '../../services/order/orderServices';
 import { Order } from '../../models/interfaces/order/orderInterface';
+import { accessModuleService } from '../../services/role/roleService';
 
 
 export const createOrderController = async (_req: Request, res: Response): Promise<Response> => {
@@ -20,11 +21,32 @@ export const createOrderController = async (_req: Request, res: Response): Promi
 }
 
 export const getOrderController = async (_req: Request, res: Response): Promise<Response> => {
-
     const companyId: string = _req.body.company;
+    const sessionUser = _req.session?.user;
+    const sessionCompany = _req.session?.company;
 
     try {
-        if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
+        if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
+        // if (!session) throw new Unauthorized('Session not active');
+
+        // console.log('session', session._id);7
+
+        if (sessionUser) {
+            const userId = sessionUser._id;
+            if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
+            const module = 'order';
+            const result = await accessModuleService(companyId, userId, module);
+            console.log('result', result);
+        }
+        if (sessionCompany) {
+            const companyId = sessionCompany._id;
+            if (typeof companyId !== 'string') throw new BadRequest('Invalid company ID');
+            const module = 'order';
+            const result = await accessModuleService(companyId, companyId, module);
+            console.log('result', result);
+        }
+
+
         const resultTable = await getOrderService(companyId);
         return res.status(200).json(resultTable);
     } catch (error: unknown) {

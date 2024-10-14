@@ -106,7 +106,7 @@ export const authLoginUserServices = async (userData: Payload): Promise<{ user: 
 
         await comparePassword(userData.password, existingUser.password);
 
-        const token = await createToken({ sub: existingUser._id } as unknown as Payload);
+        const token = await createToken({ sub: existingUser.company } as unknown as Payload);
         console.log('token', token);
         return {
             user: existingUser,

@@ -290,13 +290,13 @@ export const createPermissionRepository = async (roleData: PermissionDTO): Promi
 }
 
 // accessModule
-export const accessModuleRepository = async (company: string, userId: string) => {
+export const accessModuleRepository = async (company: string, userId?: string) => {
 
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
-
+    console.log(userId);
     //buscar el usuario en la base de datos por el ID y el roleId
     const userResult = await dbInstance.collection('users').aggregate(
         [
@@ -342,13 +342,9 @@ export const accessModuleRepository = async (company: string, userId: string) =>
     if (userResult.length === 0) {
         throw new Error('No se encontró el rol');
     }
-    // console.log(roleResult[0].roles[0]._id);
-    //buscar el rol en la base de datos por el ID
 
 
-    // buscar el rol en la base de datos por el ID
-    // const roleResult = await dbInstance.collection('roles').find({ _id: new ObjectId(userResult[0].roles[0]._id) }).toArray();
-
+    // if(){}
 
 
 
