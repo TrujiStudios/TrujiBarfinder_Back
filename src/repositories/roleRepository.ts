@@ -61,7 +61,7 @@ export const createPlantillaRolUserRepository = async (companyId: any): Promise<
     return;
 };
 
-export const createPlantillaRolAdminRepository = async (companyId: any): Promise<void> => {
+export const createPlantillaRolAdminRepository = async (companyId: any) => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
@@ -144,7 +144,7 @@ export const createPlantillaRolAdminRepository = async (companyId: any): Promise
         throw new Error('PlantillaRolAdmin was not created');
     }
 
-    return;
+    return result;
 };
 
 
