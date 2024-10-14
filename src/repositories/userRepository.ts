@@ -1,9 +1,9 @@
-import { Db } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import db from "../config/database";
 
 import { CreateUserDTO, UserResponseDTO } from "../models/dtos/user/userDTO";
 import { User } from "../models/interfaces/user/userInterface";
-import { Role } from '../models/interfaces/role/roleInteface';
+// import { Role } from '../models/interfaces/role/roleInteface';
 
 export const createUserRepository = async (userData: CreateUserDTO): Promise<UserResponseDTO> => {
 
@@ -16,7 +16,7 @@ export const createUserRepository = async (userData: CreateUserDTO): Promise<Use
     const resultUser = await collection.insertOne({
         ...userData,
         // id: userData.id!,
-        role: [userData.role as unknown as Role], // Convert role to Role[]
+        roleId: new ObjectId(userData.roleId),
         status: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -30,7 +30,8 @@ export const createUserRepository = async (userData: CreateUserDTO): Promise<Use
         id: resultUser.insertedId.toString(),
         _id: resultUser.insertedId.toString(),
         ...userData,
-        companyId: '',
+        // companyId: '',
+        role: userData.roleId, // Assuming role is derived from roleId
         createdAt: new Date(),
         updatedAt: new Date(),
     };
