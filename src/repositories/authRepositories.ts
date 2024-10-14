@@ -3,6 +3,21 @@ import { CreateCompanyDTO, CompanyResponseDTO } from '../models/dtos/company/com
 import { Db } from 'mongodb';
 import db from '../config/database';
 import { ICompany } from '../models/interfaces/auth/authInterface';
+import { createPlantillaRolAdminRepository, createPlantillaRolUserRepository } from './roleRepository';
+
+
+
+// export const createPlantillaRolAdminRepository = async (): Promise<void> => {
+//     const dbInstance: Db | null = await db;
+//     if (!dbInstance) {
+//         throw new Error('Database instance is null');
+//     }
+//     const collection = dbInstance.collection('roles');
+//     const result = await collection.insertOne(plantillaRolAdmin);
+//     if (result.acknowledged === false) {
+//         throw new Error('PlantillaRolAdmin was not created');
+//     }
+// };
 
 
 export const createCompanyRepository = async (companyData: CreateCompanyDTO): Promise<CompanyResponseDTO> => {
@@ -10,6 +25,8 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
+
+
     const collection = dbInstance.collection<ICompany>('company');
     const resultCompany = await collection.insertOne({
         ...companyData,
@@ -20,6 +37,9 @@ export const createCompanyRepository = async (companyData: CreateCompanyDTO): Pr
     if (resultCompany.acknowledged === false) {
         throw new Error('Company was not created');
     }
+
+    await createPlantillaRolAdminRepository(resultCompany.insertedId.toString());
+    await createPlantillaRolUserRepository(resultCompany.insertedId.toString());
 
     // return {} as CompanyResponseDTO;
 
