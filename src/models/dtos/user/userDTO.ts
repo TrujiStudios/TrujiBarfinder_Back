@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 
 
 export interface CreateUserDTO {
@@ -9,7 +10,7 @@ export interface CreateUserDTO {
     email: string;
     password: string;
     phone: string;
-    role: string;
+    roleId: ObjectId;
     status: boolean;
 }
 
@@ -23,8 +24,8 @@ export interface UserResponseDTO {
     email: string;
     password: string;
     phone: string;
-    role: string;
-    companyId: string;
+    role: ObjectId;
+    // companyId: string;
     company?: string;
     status: boolean;
     createdAt: Date;
