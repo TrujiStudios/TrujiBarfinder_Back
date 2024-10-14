@@ -8,6 +8,7 @@ export interface RoleDTO {
 }
 
 export interface PermissionDTO {
+    [x: string]: any;
     _id: string;
     name: string;
     // company: string;
