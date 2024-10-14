@@ -1,4 +1,5 @@
-import { Role } from "../role/roleInteface";
+import { ObjectId } from "mongodb";
+// import { Role } from "../role/roleInteface";
 
 export interface User {
     id?: string;
@@ -9,7 +10,7 @@ export interface User {
     email: string;
     password: string;
     phone: string;
-    role: Role[];
+    roleId: ObjectId;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
