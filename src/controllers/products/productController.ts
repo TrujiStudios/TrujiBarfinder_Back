@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import { CreateProductDTO, UpdateProductDTO } from '../../models/dtos/products/productDTO';
 import { createProductService, deleteProductService, getProductsService, updateProductService } from '../../services/products/productService';
 
-
-
 export const createProductController = async (_req: Request, res: Response): Promise<Response> => {
     const productData: CreateProductDTO = _req.body;
     try {
@@ -16,22 +14,15 @@ export const createProductController = async (_req: Request, res: Response): Pro
 }
 
 export const getProductsController = async (_req: Request, res: Response): Promise<Response> => {
-
     const companyId: string = _req.body.company;
-    console.log("isAutehnticated ", _req.session.isAutehnticated);
-    console.log("Cookies ", _req.cookies.TrujiStudios);
-
     try {
-        if (!_req.session.isAutehnticated) throw new Error('Session not activee');
-        console.log("Modulo de Producto");
+        if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const products = await getProductsService(companyId);
         return res.status(200).json(products);
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message })
     }
 }
-
-
 
 export const updateProductController = async (_req: Request, res: Response): Promise<Response> => {
     const companyId: string = _req.body.company;
@@ -45,11 +36,9 @@ export const updateProductController = async (_req: Request, res: Response): Pro
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message })
     }
-
 }
 
 export const deleteProductController = async (_req: Request, res: Response): Promise<Response> => {
-
     try {
         if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
@@ -59,5 +48,4 @@ export const deleteProductController = async (_req: Request, res: Response): Pro
     } catch (error: unknown) {
         return res.status(500).json({ message: (error as Error).message })
     }
-
 }

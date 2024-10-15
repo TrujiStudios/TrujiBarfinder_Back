@@ -18,8 +18,6 @@ export const createProductRepository = async (productData: CreateProductDTO): Pr
     const resultCategory = await collection.insertOne({
         ...productData,
         category: new ObjectId(productData.category),
-        // category: new ObjectId('60f3b3b3b3b3b3b3b3b3b3b3'),
-        // status: true,
         image: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -30,19 +28,6 @@ export const createProductRepository = async (productData: CreateProductDTO): Pr
     }
 
     return {} as ProductResponseDTO;
-    // return {
-    //     _id: resultCategory.insertedId.toString(),
-    //     name: productData.name,
-    //     description: productData.description,
-    //     price: productData.price,
-    //     category: productData.category,
-    //     company: productData.company,
-    //     status: productData.status,
-    //     image: productData.image,
-    //     code: productData.code,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date()
-    // };
 }
 
 
@@ -99,13 +84,9 @@ export const getProductsRepository = async (companyId: string): Promise<ProductR
         ]
     ).toArray();
 
-    // console.log(await resultsPrducts);
     if (!resultsPrducts) {
         throw new Error('Error getting products');
     }
-
-    // return resultsPrducts as ProductResponseDTO[];
-
 
     return (await resultsPrducts).map((product) => ({
         _id: product._id,

@@ -30,7 +30,6 @@ export const getAllTablesController = async (_req: Request, res: Response): Prom
             if (!accessResponse.permissions.read) {
                 throw new BadRequest('User does not have read access to this module');
             }
-            // console.log('result', result);
         }
         if (sessionCompany) {
             const companyId = sessionCompany._id;
@@ -62,7 +61,6 @@ export const updateTablesController = async (_req: Request, res: Response): Prom
         const results = await updateTablesServices(companyId, tableId, updatedData);
         return res.status(200).json({
             msg: 'All tables',
-            // message: message,
             data: results
         });
     } catch (error: unknown) {

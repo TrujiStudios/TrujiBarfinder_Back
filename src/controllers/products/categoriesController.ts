@@ -9,7 +9,6 @@ import { BadRequest } from '../../utils/errors/errors';
 export const createCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     const categoryData: CreateCategoryDTO = _req.body;
     try {
-        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const newCategory = await createCategoryService(categoryData);
         return res.status(201).json(newCategory);
     } catch (error: unknown) {
@@ -53,7 +52,6 @@ export const getCategoriesController = async (_req: Request, res: Response): Pro
 
 export const updateCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     try {
-        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
         const categoryId: string = _req.params.categoryId;
         const updatedData: Partial<Category> = _req.body;
@@ -66,7 +64,6 @@ export const updateCategoryController = async (_req: Request, res: Response): Pr
 
 export const deleteCategoryController = async (_req: Request, res: Response): Promise<Response> => {
     try {
-        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
         const companyId: string = _req.body.company;
         const categoryId: string = _req.params.categoryId;
         const categories = await deleteCategoriesService(companyId, categoryId)

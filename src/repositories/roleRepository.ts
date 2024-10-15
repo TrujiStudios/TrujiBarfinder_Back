@@ -1,9 +1,7 @@
 import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
-// import { BadRequest } from "../utils/errors/errors";
 import { PermissionDTO, RoleResponseDTO } from "../models/dtos/role/roleDTO";
 import { Permission, ReleResponse } from "../models/interfaces/role/roleInteface";
-// import plantillaRolAdmin from "../utils/plantillas/rol.admin";
 
 export const createPlantillaRolUserRepository = async (companyId: any): Promise<void> => {
     const dbInstance: Db | null = await db;
@@ -222,26 +220,6 @@ export const createRoleRepository = async (roleData: ReleResponse): Promise<Rele
         throw new Error('Database instance is null');
     }
 
-    // Buscar los permisos por sus IDs en la base de datos
-    // const permissionDocs = await dbInstance.collection<Permission>('permissions')
-    //     .find({ _id: { $in: roleData.permissions.map(p => new ObjectId(p)) } })
-    //     .toArray();
-
-    // // Validar que todos los permisos existen
-    // if (permissionDocs.length !== roleData.permissions.length) {
-    //     throw new Error('Algunos permisos proporcionados no existen');
-    // }
-
-    // Crear el nuevo rol con los permisos encontrados
-    // const newRole = {
-    //     name: roleData.name,
-    //     permissions: permissionDocs, // Asigna los permisos encontrados
-    //     company: roleData.company,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date()
-    // };
-
-    // Insertar el rol en la base de datos
     const collection = dbInstance.collection('roles');
     const resultRole = await collection.insertOne(roleData);
 
@@ -260,7 +238,6 @@ export const createRoleRepository = async (roleData: ReleResponse): Promise<Rele
 }
 
 
-//updasteRole
 export const updateRoleRepository = async (roleId: string, roleData: ReleResponse): Promise<ReleResponse> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
@@ -268,7 +245,6 @@ export const updateRoleRepository = async (roleId: string, roleData: ReleRespons
     }
 
 
-    // Actualizar el rol en la base de datos
     const collection = dbInstance.collection('roles');
     const resultRole = await collection.updateOne(
         { _id: new ObjectId(roleId) },
@@ -348,8 +324,6 @@ export const createPermissionRepository = async (roleData: PermissionDTO): Promi
         throw new Error('Database instance is null');
     }
 
-    // delete roleData._id;
-
     const collection = dbInstance.collection<Permission>('permissions');
     const resultRole = await collection.insertOne({
         ...roleData,
@@ -366,14 +340,13 @@ export const createPermissionRepository = async (roleData: PermissionDTO): Promi
     return {
         _id: resultRole.insertedId.toString(),
         name: roleData.name,
-        company: "", // Add the company property
-        permissions: [], // Add the permissions property
+        company: "", 
+        permissions: [], 
         createdAt: new Date(),
         updatedAt: new Date()
     };
 }
 
-// accessModule
 export const accessModuleRepository = async (company: string, userId?: string) => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
@@ -381,7 +354,6 @@ export const accessModuleRepository = async (company: string, userId?: string) =
     }
     console.log(userId);
 
-    // Buscar el usuario en la base de datos por el ID y el roleId
     let userResult = await dbInstance.collection('users').aggregate([
         {
             $match: {
@@ -419,7 +391,6 @@ export const accessModuleRepository = async (company: string, userId?: string) =
         }
     ]).toArray();
 
-    // Si no se encuentra el usuario, buscar en la colección company
     if (userResult.length === 0) {
         userResult = await dbInstance.collection('company').aggregate([
             {
@@ -478,18 +449,12 @@ export const accessModuleRepository = async (company: string, userId?: string) =
     }))[0];
 };
 
-
-
-
-//ejemplo
-
 export const accessModuleejemplo = async (company: string, userId?: string, module?: string) => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
 
-    // Buscar el usuario en la base de datos por el ID y el roleId
     let userResult = await dbInstance.collection('users').aggregate([
         {
             $match: {
@@ -526,7 +491,6 @@ export const accessModuleejemplo = async (company: string, userId?: string, modu
         }
     ]).toArray();
 
-    // Si no se encuentra el usuario, buscar en la colección company
     if (userResult.length === 0) {
         userResult = await dbInstance.collection('company').aggregate([
             {
@@ -566,7 +530,6 @@ export const accessModuleejemplo = async (company: string, userId?: string, modu
         }
     }
 
-    // Filtrar los permisos del módulo específico para verificar el acceso y los permisos
     return userResult.map((role): RoleResponseDTO => ({
         _id: role._id,
         name: role.name,
@@ -577,7 +540,7 @@ export const accessModuleejemplo = async (company: string, userId?: string, modu
             _id: permission._id.toString(),
             name: permission.name,
             type: permission.type,
-            authorization: module ? permission.authorization[module] || null : null  // Obtener autorización específica del módulo
+            authorization: module ? permission.authorization[module] || null : null  
         }))
     }))[0];
 };

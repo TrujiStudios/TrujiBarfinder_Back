@@ -1,10 +1,6 @@
-
 import { Request, Response } from 'express';
 import { CompanyResponseDTO } from '../../models/dtos/company/companyDTO';
 import { findCompanyByEmailServiceFixed, getCompaniesService } from '../../services/company/companyServices';
-
-
-
 
 export const getCompaniesController = async (_req: Request, res: Response): Promise<Response<{ companies: CompanyResponseDTO[], count: number }>> => {
     try {
@@ -18,9 +14,7 @@ export const getCompaniesController = async (_req: Request, res: Response): Prom
 
 export const findCompanyByEmailControllerFixed = async (req: Request, res: Response): Promise<Response> => {
     try {
-        //body 
         const { email } = req.body;
-        // const companyId: string = req.body.company;
         const password: string = req.body.password;
         if (!req.session.isAutehnticated) throw new Error('Session not active');
         const results = await findCompanyByEmailServiceFixed(email, password);
