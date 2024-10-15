@@ -1,9 +1,10 @@
 
-import { PermissionDTO, RoleDTO, RoleResponseDTO } from '../../models/dtos/role/roleDTO';
+import { PermissionDTO, RoleResponseDTO } from '../../models/dtos/role/roleDTO';
+import { ReleResponse } from '../../models/interfaces/role/roleInteface';
 import { accessModuleejemplo, createPermissionRepository, createRoleRepository, getRoleRepository } from '../../repositories/roleRepository';
 import { BadRequest } from '../../utils/errors/errors';
 
-export const createRoleService = async (productData: RoleDTO): Promise<RoleResponseDTO> => {
+export const createRoleService = async (productData: ReleResponse): Promise<ReleResponse> => {
 
     try {
 
