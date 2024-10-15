@@ -1,8 +1,8 @@
 import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
 // import { BadRequest } from "../utils/errors/errors";
-import { PermissionDTO, RoleDTO, RoleResponseDTO } from "../models/dtos/role/roleDTO";
-import { Permission, Role } from "../models/interfaces/role/roleInteface";
+import { PermissionDTO, RoleResponseDTO } from "../models/dtos/role/roleDTO";
+import { Permission, ReleResponse, Role } from "../models/interfaces/role/roleInteface";
 // import plantillaRolAdmin from "../utils/plantillas/rol.admin";
 
 export const createPlantillaRolUserRepository = async (companyId: any): Promise<void> => {
@@ -215,7 +215,7 @@ export const createPlantillaRolAdminRepository = async (companyId: any) => {
 };
 
 
-export const createRoleRepository = async (roleData: RoleDTO): Promise<RoleResponseDTO> => {
+export const createRoleRepository = async (roleData: ReleResponse): Promise<ReleResponse> => {
 
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
@@ -223,42 +223,39 @@ export const createRoleRepository = async (roleData: RoleDTO): Promise<RoleRespo
     }
 
     // Buscar los permisos por sus IDs en la base de datos
-    const permissionDocs = await dbInstance.collection<Permission>('permissions')
-        .find({ _id: { $in: roleData.permissions.map(p => new ObjectId(p)) } })
-        .toArray();
+    // const permissionDocs = await dbInstance.collection<Permission>('permissions')
+    //     .find({ _id: { $in: roleData.permissions.map(p => new ObjectId(p)) } })
+    //     .toArray();
 
-    // Validar que todos los permisos existen
-    if (permissionDocs.length !== roleData.permissions.length) {
-        throw new Error('Algunos permisos proporcionados no existen');
-    }
+    // // Validar que todos los permisos existen
+    // if (permissionDocs.length !== roleData.permissions.length) {
+    //     throw new Error('Algunos permisos proporcionados no existen');
+    // }
 
     // Crear el nuevo rol con los permisos encontrados
-    const newRole = {
-        name: roleData.name,
-        permissions: permissionDocs, // Asigna los permisos encontrados
-        company: roleData.company,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
+    // const newRole = {
+    //     name: roleData.name,
+    //     permissions: permissionDocs, // Asigna los permisos encontrados
+    //     company: roleData.company,
+    //     createdAt: new Date(),
+    //     updatedAt: new Date()
+    // };
 
     // Insertar el rol en la base de datos
     const collection = dbInstance.collection('roles');
-    const resultRole = await collection.insertOne(newRole);
+    const resultRole = await collection.insertOne(roleData);
 
     if (resultRole.acknowledged === false) {
         throw new Error('El rol no pudo ser creado');
     }
 
     return {
-        _id: resultRole.insertedId.toString(),
         name: roleData.name,
-        company: roleData.company,
-        permissions: permissionDocs.map(permission => ({
-            ...permission,
-            _id: permission._id.toString()
-        })), // Devolvemos los permisos completos
-        createdAt: new Date(),
-        updatedAt: new Date()
+        active: true,
+        type: roleData.type,
+        authorization: roleData.authorization,
+        accessTo: roleData.accessTo,
+        description: roleData.description
     };
 }
 
