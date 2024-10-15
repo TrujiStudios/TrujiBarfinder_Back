@@ -393,3 +393,107 @@ export const accessModuleRepository = async (company: string, userId?: string) =
         }))
     }))[0];
 };
+
+
+
+
+//ejemplo
+
+export const accessModuleejemplo = async (company: string, userId?: string, module?: string) => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+    // Buscar el usuario en la base de datos por el ID y el roleId
+    let userResult = await dbInstance.collection('users').aggregate([
+        {
+            $match: {
+                _id: new ObjectId(userId),
+                company: new ObjectId(company),
+            }
+        },
+        {
+            $lookup: {
+                from: 'roles',
+                localField: 'roleId',
+                foreignField: '_id',
+                as: 'roles'
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                company: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                roleId: 1,
+                roles: {
+                    _id: 1,
+                    name: 1,
+                    type: 1,
+                    authorization: 1,
+                    company: 1,
+                    createdAt: 1,
+                    updatedAt: 1
+                }
+            }
+        }
+    ]).toArray();
+
+    // Si no se encuentra el usuario, buscar en la colección company
+    if (userResult.length === 0) {
+        userResult = await dbInstance.collection('company').aggregate([
+            {
+                $match: {
+                    _id: new ObjectId(company),
+                }
+            },
+            {
+                $lookup: {
+                    from: 'roles',
+                    localField: 'roleId',
+                    foreignField: '_id',
+                    as: 'roles'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    roles: {
+                        _id: 1,
+                        name: 1,
+                        type: 1,
+                        authorization: 1,
+                        company: 1,
+                        createdAt: 1,
+                        updatedAt: 1
+                    }
+                }
+            }
+        ]).toArray();
+
+        if (userResult.length === 0) {
+            throw new Error('No se encontró el usuario ni la compañía');
+        }
+    }
+
+    // Filtrar los permisos del módulo específico para verificar el acceso y los permisos
+    return userResult.map((role): RoleResponseDTO => ({
+        _id: role._id,
+        name: role.name,
+        company: role.company,
+        createdAt: role.createdAt,
+        updatedAt: role.updatedAt,
+        permissions: role.roles.map((permission: { _id: { toString: () => any; }; name: any; type: any, authorization: any }) => ({
+            _id: permission._id.toString(),
+            name: permission.name,
+            type: permission.type,
+            authorization: module ? permission.authorization[module] || null : null  // Obtener autorización específica del módulo
+        }))
+    }))[0];
+};
