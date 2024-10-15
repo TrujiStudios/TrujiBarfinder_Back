@@ -2,7 +2,7 @@ import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
 // import { BadRequest } from "../utils/errors/errors";
 import { PermissionDTO, RoleResponseDTO } from "../models/dtos/role/roleDTO";
-import { Permission, ReleResponse, Role } from "../models/interfaces/role/roleInteface";
+import { Permission, ReleResponse } from "../models/interfaces/role/roleInteface";
 // import plantillaRolAdmin from "../utils/plantillas/rol.admin";
 
 export const createPlantillaRolUserRepository = async (companyId: any): Promise<void> => {
@@ -263,60 +263,41 @@ export const createRoleRepository = async (roleData: ReleResponse): Promise<Rele
 
 export const getRoleRepository = async (
     companyId: string,
-): Promise<RoleResponseDTO[]> => {
+): Promise<ReleResponse[]> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
 
-    const roleResult = await dbInstance.collection<Role>('roles').aggregate(
+    const roleResult = await dbInstance.collection<ReleResponse>('roles').aggregate(
         [
             {
                 $match: {
-                    company: companyId
-                }
-            },
-            {
-                $lookup: {
-                    from: 'permissions',
-                    localField: 'permissions._id',
-                    foreignField: '_id',
-                    as: 'permissions'
+                    company: new ObjectId(companyId)
                 }
             },
             {
                 $project: {
-                    _id: 1,
                     name: 1,
-                    company: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                    permissions: {
-                        _id: 1,
-                        name: 1,
-                        company: 1,
-                        createdAt: 1,
-                        updatedAt: 1
-                    }
+                    active: 1,
+                    type: 1,
+                    authorization: 1,
+                    accessTo: 1,
+                    description: 1
                 }
             }
         ]
     ).toArray();
 
-    return roleResult.map((role): RoleResponseDTO => ({
-        _id: role._id,
+    return roleResult.map((role): ReleResponse => ({
         name: role.name,
-        company: role.company,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt,
-        permissions: role.permissions.map((permission: { _id: { toString: () => any; }; name: any; company: any; createdAt: any; updatedAt: any; }) => ({
-            _id: permission._id.toString(),
-            name: permission.name,
-            company: permission.company,
-            createdAt: permission.createdAt,
-            updatedAt: permission.updatedAt
-        }))
+        active: role.active,
+        type: role.type,
+        authorization: role.authorization,
+        accessTo: role.accessTo,
+        description: role.description
     }));
+
 
 
 }
