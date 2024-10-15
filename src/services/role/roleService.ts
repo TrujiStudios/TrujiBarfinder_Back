@@ -1,7 +1,7 @@
 
 import { PermissionDTO, RoleResponseDTO } from '../../models/dtos/role/roleDTO';
 import { ReleResponse } from '../../models/interfaces/role/roleInteface';
-import { accessModuleejemplo, createPermissionRepository, createRoleRepository, getRoleRepository } from '../../repositories/roleRepository';
+import { accessModuleejemplo, createPermissionRepository, createRoleRepository, getRoleRepository, updateRoleRepository } from '../../repositories/roleRepository';
 import { BadRequest } from '../../utils/errors/errors';
 
 export const createRoleService = async (productData: ReleResponse): Promise<ReleResponse> => {
@@ -128,3 +128,15 @@ export const accessModuleService = async (company: string, userId: string, modul
 };
 
 
+//updateRole
+export const updateRoleService = async (roleId: string, productData: ReleResponse): Promise<ReleResponse> => {
+
+    try {
+
+        const newRole = await updateRoleRepository(roleId, productData);
+        return newRole;
+
+    } catch (error: unknown) {
+        throw new BadRequest('Error creating Role: ' + (error as Error).message);
+    }
+}
