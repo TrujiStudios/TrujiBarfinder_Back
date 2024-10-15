@@ -18,7 +18,7 @@ export const createRoleService = async (productData: ReleResponse): Promise<Rele
 
 export const getRoleService = async (
     companyId: string,
-): Promise<RoleResponseDTO[]> => {
+): Promise<ReleResponse[]> => {
     const roleResult = await getRoleRepository(companyId);
     return roleResult;
 }
