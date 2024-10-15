@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
-import { PermissionDTO, RoleDTO } from '../../models/dtos/role/roleDTO';
+import { PermissionDTO } from '../../models/dtos/role/roleDTO';
 import { accessModuleService, createPermissionService, createRoleService, getRoleService } from '../../services/role/roleService';
+import { ReleResponse } from '../../models/interfaces/role/roleInteface';
 
 
 
 export const createRleController = async (_req: Request, res: Response): Promise<Response> => {
-    const role: RoleDTO = _req.body;
+    const role: ReleResponse = _req.body;
     try {
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
         const resultRole = await createRoleService(role);
