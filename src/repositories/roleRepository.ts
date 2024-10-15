@@ -74,7 +74,7 @@ export const createPlantillaRolAdminRepository = async (companyId: any) => {
                 type: "Admin",
                 defaulUser: false,
                 defalultAdmin: true,
-                authorizations: {
+                authorization: {
                     moduleApp: {
                         accessModule: {
                             showModule: true
@@ -291,19 +291,56 @@ export const createPermissionRepository = async (roleData: PermissionDTO): Promi
 
 // accessModule
 export const accessModuleRepository = async (company: string, userId?: string) => {
-
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
     console.log(userId);
-    //buscar el usuario en la base de datos por el ID y el roleId
-    const userResult = await dbInstance.collection('users').aggregate(
-        [
+
+    // Buscar el usuario en la base de datos por el ID y el roleId
+    let userResult = await dbInstance.collection('users').aggregate([
+        {
+            $match: {
+                _id: new ObjectId(userId),
+                company: new ObjectId(company),
+            }
+        },
+        {
+            $lookup: {
+                from: 'roles',
+                localField: 'roleId',
+                foreignField: '_id',
+                as: 'roles'
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                company: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                roleId: 1,
+                roles: {
+                    _id: 1,
+                    name: 1,
+                    type: 1,
+                    authorization: 1,
+                    company: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    permissions: 1
+                }
+            }
+        }
+    ]).toArray();
+
+    // Si no se encuentra el usuario, buscar en la colección company
+    if (userResult.length === 0) {
+        userResult = await dbInstance.collection('company').aggregate([
             {
                 $match: {
-                    _id: new ObjectId(userId),
-                    company: new ObjectId(company),
+                    _id: new ObjectId(company),
                 }
             },
             {
@@ -318,10 +355,8 @@ export const accessModuleRepository = async (company: string, userId?: string) =
                 $project: {
                     _id: 1,
                     name: 1,
-                    company: 1,
                     createdAt: 1,
                     updatedAt: 1,
-                    roleId: 1,
                     roles: {
                         _id: 1,
                         name: 1,
@@ -332,25 +367,14 @@ export const accessModuleRepository = async (company: string, userId?: string) =
                         updatedAt: 1,
                         permissions: 1
                     }
-
-
                 }
             }
-        ]
-    ).toArray();
+        ]).toArray();
 
-    if (userResult.length === 0) {
-        throw new Error('No se encontró el rol');
+        if (userResult.length === 0) {
+            throw new Error('No se encontró el usuario ni la compañía');
+        }
     }
-
-
-    // if(){}
-
-
-
-
-
-
 
     return userResult.map((role): RoleResponseDTO => ({
         _id: role._id,
@@ -368,7 +392,4 @@ export const accessModuleRepository = async (company: string, userId?: string) =
             updatedAt: permission.updatedAt
         }))
     }))[0];
-
-
-
-}
+};
