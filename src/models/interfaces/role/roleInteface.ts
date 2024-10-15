@@ -17,3 +17,51 @@ export interface Permission {
     createdAt: Date;
     updatedAt: Date;
 }
+
+
+
+export interface ReleResponse {
+    name: string;
+    active: boolean;
+    type: string;
+    authorization: Authorization;
+    accessTo: AccessTo[];
+    description: string;
+}
+
+export interface AccessTo {
+    path: string;
+    title: string;
+    icon: string;
+    class: string;
+}
+
+export interface Authorization {
+    moduleApp: ModuleApp;
+    personalInformation: Category;
+    order: Category;
+    table: Category;
+    product: Category;
+    category: Category;
+    users: Category;
+}
+
+export interface Category {
+    accessModule: AccessModule;
+    access: Access;
+}
+
+export interface Access {
+    c: boolean;
+    r: boolean;
+    u: boolean;
+    d: boolean;
+}
+
+export interface AccessModule {
+    showModule: boolean;
+}
+
+export interface ModuleApp {
+    accessModule: AccessModule;
+}
