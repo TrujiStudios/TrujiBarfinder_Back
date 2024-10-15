@@ -5,6 +5,7 @@ import { CreateOrderDTO } from '../../models/dtos/order/orderDTO';
 import { createOrderService, getOneOrderService, getOrderService, updateOrderService } from '../../services/order/orderServices';
 import { Order } from '../../models/interfaces/order/orderInterface';
 import { accessModuleService } from '../../services/role/roleService';
+// import { accessModuleejemplo } from '../../repositories/roleRepository';
 
 
 export const createOrderController = async (_req: Request, res: Response): Promise<Response> => {
@@ -27,26 +28,26 @@ export const getOrderController = async (_req: Request, res: Response): Promise<
 
     try {
         if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
-        // if (!session) throw new Unauthorized('Session not active');
 
-        // console.log('session', session._id);7
 
         if (sessionUser) {
             const userId = sessionUser._id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'order';
-            const result = await accessModuleService(companyId, userId, module);
-            console.log('result', result);
+            const accessResponse = await accessModuleService(companyId, userId, module);
+            if (!accessResponse.permissions.read) {
+                throw new BadRequest('User does not have read access to this module');
+            }
         }
         if (sessionCompany) {
             const companyId = sessionCompany._id;
             if (typeof companyId !== 'string') throw new BadRequest('Invalid company ID');
             const module = 'order';
-            const result = await accessModuleService(companyId, companyId, module);
-            console.log('result', result);
+            const accessResponse = await accessModuleService(companyId, companyId, module);
+            if (!accessResponse.permissions.read) {
+                throw new BadRequest('User does not have read access to this module');
+            }
         }
-
-
         const resultTable = await getOrderService(companyId);
         return res.status(200).json(resultTable);
     } catch (error: unknown) {
