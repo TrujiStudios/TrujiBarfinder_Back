@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { createCategoryService, deleteCategoriesService, getCategoriesService, updateCategoriesService } from '../../services/products/categoryService';
 import { CreateCategoryDTO } from '../../models/dtos/products/categoryDTO';
 import { Category } from '../../models/interfaces/products/categoryInterface';
+import { accessModuleService } from '../../services/role/roleService';
+import { BadRequest } from '../../utils/errors/errors';
 
 
 export const createCategoryController = async (_req: Request, res: Response): Promise<Response> => {
@@ -17,11 +19,30 @@ export const createCategoryController = async (_req: Request, res: Response): Pr
 
 
 export const getCategoriesController = async (_req: Request, res: Response): Promise<Response> => {
-
+    const sessionUser = _req.session?.user;
+    const sessionCompany = _req.session?.company;
+    const companyId: string = _req.body.company;
     try {
-        // if (!_req.session.isAutehnticated) throw new Error('Session not active');
-        const companyId: string = _req.body.company;
+        if (!_req.session.isAutehnticated) throw new Error('Session not active');
         console.log("Session de Categoria");
+        if (sessionUser) {
+            const userId = sessionUser._id;
+            if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
+            const module = 'category';
+            const accessResponse = await accessModuleService(companyId, userId, module);
+            if (!accessResponse.permissions.read) {
+                throw new BadRequest('User does not have read access to this module');
+            }
+        }
+        if (sessionCompany) {
+            const companyId = sessionCompany._id;
+            if (typeof companyId !== 'string') throw new BadRequest('Invalid company ID');
+            const module = 'category';
+            const accessResponse = await accessModuleService(companyId, companyId, module);
+            if (!accessResponse.permissions.read) {
+                throw new BadRequest('User does not have read access to this module');
+            }
+        }
         const categories = await getCategoriesService(companyId);
         return res.status(200).json(categories);
     } catch (error: unknown) {
