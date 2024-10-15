@@ -43,7 +43,51 @@ export const createPlantillaRolUserRepository = async (companyId: any): Promise<
                             c: true,
                             r: true,
                             u: true,
-                            d: true
+                            d: false
+                        }
+                    },
+                    table: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: false,
+                            r: true,
+                            u: false,
+                            d: false
+                        }
+                    },
+                    product: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: false,
+                            r: true,
+                            u: false,
+                            d: false
+                        }
+                    },
+                    category: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: false,
+                            r: true,
+                            u: false,
+                            d: false
+                        }
+                    },
+                    users: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: false,
+                            r: true,
+                            u: false,
+                            d: false
                         }
                     }
                 },
@@ -131,7 +175,30 @@ export const createPlantillaRolAdminRepository = async (companyId: any) => {
                             u: true,
                             d: true
                         }
-                    }
+                    },
+                    product: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: true,
+                            r: true,
+                            u: true,
+                            d: true
+                        }
+                    },
+                    category: {
+                        accessModule: {
+                            showModule: true
+                        },
+                        access: {
+                            c: true,
+                            r: true,
+                            u: true,
+                            d: true
+                        }
+                    },
+
                 },
                 accessTo: [],
                 company: new ObjectId(companyId),
