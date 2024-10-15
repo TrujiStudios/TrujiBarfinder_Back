@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticateToken } from '../middlewares/authentication/auth';
 // import { createTablesSchema } from '../utils/validation/tables.Validation';
 // import { validate } from '../middlewares/validate';
-import { accessModuleController, createPermissionController, createRleController, getRoleController } from '../controllers/role/roleController';
+import { accessModuleController, createPermissionController, createRleController, getRoleController, updateRoleController } from '../controllers/role/roleController';
 
 
 
@@ -14,6 +14,9 @@ router.post('/create', authenticateToken, createRleController);
 
 // get table
 router.get('/get', authenticateToken, getRoleController);
+
+//update role
+router.patch('/update/:roleId', authenticateToken, updateRoleController);
 
 // // create permission
 router.post('/createPermission', authenticateToken, createPermissionController);
