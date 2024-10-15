@@ -260,6 +260,45 @@ export const createRoleRepository = async (roleData: ReleResponse): Promise<Rele
 }
 
 
+//updasteRole
+export const updateRoleRepository = async (roleId: string, roleData: ReleResponse): Promise<ReleResponse> => {
+    const dbInstance: Db | null = await db;
+    if (!dbInstance) {
+        throw new Error('Database instance is null');
+    }
+
+
+    // Actualizar el rol en la base de datos
+    const collection = dbInstance.collection('roles');
+    const resultRole = await collection.updateOne(
+        { _id: new ObjectId(roleId) },
+        {
+            $set: {
+                name: roleData.name,
+                active: roleData.active,
+                type: roleData.type,
+                authorization: roleData.authorization,
+                accessTo: roleData.accessTo,
+                description: roleData.description,
+                updatedAt: new Date()
+            }
+        }
+    );
+
+    if (resultRole.modifiedCount !== 1) {
+        throw new Error('Role was not updated');
+    }
+
+    return {
+        name: roleData.name,
+        active: roleData.active,
+        type: roleData.type,
+        authorization: roleData.authorization,
+        accessTo: roleData.accessTo,
+        description: roleData.description
+    };
+}
+
 
 export const getRoleRepository = async (
     companyId: string,
