@@ -19,6 +19,7 @@ export interface RoleResponseDTO {
     name: string;
     company: string;
     permissions: PermissionDTO[];
+    // moduleAccess: PermissionDTO[];
     createdAt: Date;
     updatedAt: Date;
 }
