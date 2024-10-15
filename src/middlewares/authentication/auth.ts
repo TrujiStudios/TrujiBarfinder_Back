@@ -9,8 +9,6 @@ import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
 import { findUserByEmailService } from '../../services/user/userService';
 
-
-
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers['authorization'];
@@ -33,7 +31,6 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 
         // Verificar el `companyId` del token y asignarlo al request
         req.body.company = new ObjectId(payload.sub);  // El `sub` del payload es el `companyId` o `userId`
-        // req.body.company = new ObjectId(payload.company);  // El `sub` del payload es el `companyId` o `userId`
 
         // Si la sesión no tiene información sobre la compañía o el usuario, lanzar un error
         if (!req.session.company && !req.session.user) {
@@ -85,8 +82,6 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
 };
 
-
-
 export const validateToken = (token: string): Payload | null => {
     try {
         const decoded = jwt.verify(token, environment.jetSecret || 'defaultSecret') as JwtPayload;
@@ -97,7 +92,6 @@ export const validateToken = (token: string): Payload | null => {
     }
 };
 
-
 const authSession = async (isAutehnticated: boolean) => {
     if (isAutehnticated) {
         return true;
@@ -105,44 +99,3 @@ const authSession = async (isAutehnticated: boolean) => {
         return false;
     }
 }
-
-
-
-
-
-// export const authorize = (requiredPermissions: string[]) => {
-//     return async (req: Request, res: Response, next: NextFunction) => {
-//       try {
-//         const userId = req.userId;  // Supongamos que tienes el ID del usuario en la sesión o token
-  
-//         const dbInstance: Db | null = await db;
-//         if (!dbInstance) throw new Error('Database connection error');
-  
-//         const user = await dbInstance.collection<User>('users').findOne({ _id: new ObjectId(userId) });
-  
-//         if (!user) {
-//           return res.status(403).json({ message: 'Acceso denegado. Usuario no encontrado.' });
-//         }
-  
-//         // Extrae permisos de roles
-//         const rolePermissions = user.roles.reduce((acc: string[], role) => {
-//           return [...acc, ...role.permissions.map(p => p.name)];
-//         }, []);
-  
-//         // Combina permisos de roles con permisos adicionales
-//         const allPermissions = [...rolePermissions, ...user.additionalPermissions.map(p => p.name)];
-  
-//         // Verifica si el usuario tiene al menos uno de los permisos requeridos
-//         const hasPermission = requiredPermissions.some(permission => allPermissions.includes(permission));
-  
-//         if (!hasPermission) {
-//           return res.status(403).json({ message: 'Acceso denegado. No tienes permisos suficientes.' });
-//         }
-  
-//         next();  // Continúa si tiene los permisos
-//       } catch (error) {
-//         return res.status(500).json({ message: 'Error en la autorización.', error: error.message });
-//       }
-//     };
-//   };
-  

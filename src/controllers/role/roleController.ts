@@ -5,8 +5,6 @@ import { PermissionDTO } from '../../models/dtos/role/roleDTO';
 import { accessModuleService, createPermissionService, createRoleService, getRoleService, updateRoleService } from '../../services/role/roleService';
 import { ReleResponse } from '../../models/interfaces/role/roleInteface';
 
-
-
 export const createRleController = async (_req: Request, res: Response): Promise<Response> => {
     const role: ReleResponse = _req.body;
     try {
@@ -30,8 +28,6 @@ export const getRoleController = async (_req: Request, res: Response): Promise<R
     }
 }
 
-// createPermission 
-
 export const createPermissionController = async (_req: Request, res: Response): Promise<Response> => {
     const role: PermissionDTO = _req.body;
     try {
@@ -43,9 +39,7 @@ export const createPermissionController = async (_req: Request, res: Response): 
     }
 }
 
-// accessModule
 export const accessModuleController = async (_req: Request, res: Response): Promise<Response> => {
-    // const role: PermissionDTO = _req.body;
     const userId = _req.params.id;
     const company = _req.body.company;
     const module = _req.body.module;
@@ -54,12 +48,10 @@ export const accessModuleController = async (_req: Request, res: Response): Prom
         const resultRole = await accessModuleService(company, userId, module);
         return res.status(201).json(resultRole);
     } catch (error: unknown) {
-        return errorResponse(res, error as Error
-        );
+        return errorResponse(res, error as Error);
     }
 }
 
-//updateRole
 export const updateRoleController = async (_req: Request, res: Response): Promise<Response> => {
     const role: ReleResponse = _req.body;
     const roleId = _req.params.roleId;

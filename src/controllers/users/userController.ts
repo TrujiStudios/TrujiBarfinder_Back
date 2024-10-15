@@ -15,20 +15,3 @@ export const createUserController = async (_req: Request, res: Response): Promis
         return errorResponse(res, error as Error);
     }
 }
-
-//
-
-
-
-// export const getOrderController = async (_req: Request, res: Response): Promise<Response> => {
-
-//     const companyId: string = _req.body.company;
-
-//     try {
-//         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
-//         const resultTable = await getOrderService(companyId);
-//         return res.status(200).json(resultTable);
-//     } catch (error: unknown) {
-//         return errorResponse(res, error as Error);
-//     }
-// }

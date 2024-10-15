@@ -9,9 +9,6 @@ async function connect(): Promise<Db | null> {
     try {
         await client.connect();
         const db = client.db(environment.databaseName);
-        // const collection = db.collection('example-collection');
-        // const results = await collection.insertOne({ name: 'example' });
-        // console.log('Inserted one document', results.insertedId);
         console.log('Connected to the database =>>>', db.databaseName);
         console.log();
 

@@ -5,15 +5,11 @@ import { CreateOrderDTO } from '../../models/dtos/order/orderDTO';
 import { createOrderService, getOneOrderService, getOrderService, updateOrderService } from '../../services/order/orderServices';
 import { Order } from '../../models/interfaces/order/orderInterface';
 import { accessModuleService } from '../../services/role/roleService';
-// import { accessModuleejemplo } from '../../repositories/roleRepository';
-
 
 export const createOrderController = async (_req: Request, res: Response): Promise<Response> => {
     const tableData: CreateOrderDTO = _req.body;
     try {
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
-        // const userId: string = _req.body.company;
-        console.log("CREATE ORDER");
         const resultTable = await createOrderService(tableData);
         return res.status(201).json(resultTable);
     } catch (error: unknown) {
@@ -28,7 +24,6 @@ export const getOrderController = async (_req: Request, res: Response): Promise<
 
     try {
         if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
-
 
         if (sessionUser) {
             const userId = sessionUser._id;

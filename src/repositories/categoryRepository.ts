@@ -3,8 +3,6 @@ import { CategoryDTO, CategoryResponseDTO, CreateCategoryDTO } from "../models/d
 import db from "../config/database";
 import { Category } from "../models/interfaces/products/categoryInterface";
 
-
-
 export const createCategoryRepository = async (categoryData: CreateCategoryDTO): Promise<CategoryResponseDTO> => {
 
     const dbInstance: Db | null = await db;
@@ -15,7 +13,6 @@ export const createCategoryRepository = async (categoryData: CreateCategoryDTO):
     const collection = dbInstance.collection<Category>('categories');
     const resultCategory = await collection.insertOne({
         ...categoryData,
-        // status: true,
         imagen: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -81,7 +78,6 @@ export const updateCategoriesRepository = async (
         throw new Error('Database instance is null');
     }
 
-
     const result = await dbInstance.collection<Category>('categories').findOneAndUpdate(
         {
             _id: new ObjectId(categoryId),
@@ -91,7 +87,6 @@ export const updateCategoriesRepository = async (
             $set: updatedData
         },
         {
-            // returnDocument: 'before'
             returnDocument: 'after'
         }
     )
@@ -102,7 +97,6 @@ export const updateCategoriesRepository = async (
 
     return result
 };
-
 
 export const deleteCategoriesRepository = async (
     companyId: string,

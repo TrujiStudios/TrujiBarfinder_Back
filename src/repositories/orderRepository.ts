@@ -3,10 +3,6 @@ import db from "../config/database";
 import { CreateOrderDTO, OrderResponseDTO } from "../models/dtos/order/orderDTO";
 import { Order, OrderUpdate } from "../models/interfaces/order/orderInterface";
 import { Products } from "../models/interfaces/products/productInterface";
-// import { BadRequest } from "../utils/errors/errors";
-
-
-
 
 export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<OrderResponseDTO> => {
     const dbInstance = await db;
@@ -14,7 +10,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         throw new Error('Database instance is null');
     }
 
-    // Verificar que cada producto exista en la base de datos y obtener su precio
     const productsCollection = dbInstance.collection<Products>('products');
     const resolvedProducts = await Promise.all(orderData.products.map(async product => {
         const productId = new ObjectId(product.productId);
@@ -29,7 +24,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         };
     }));
 
-    // Verificar si la mesa ya tiene una orden existente
     const ordersCollection = dbInstance.collection<Order>('orders');
     const existingOrder = await ordersCollection.findOne({
         tableId: new ObjectId(orderData.tableId),
@@ -37,7 +31,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
     });
 
     if (existingOrder) {
-        // Agregar los nuevos productos a la orden existente
         const updatedProducts = [...existingOrder.products, ...resolvedProducts];
         const total = updatedProducts.reduce((acc, product) => {
             return acc + product.price * product.quantity;
@@ -67,7 +60,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
             products: updatedProducts
         } as unknown as OrderResponseDTO;
     } else {
-        // Continuar con la lógica original para crear una nueva orden
         const total = resolvedProducts.reduce((acc, product) => {
             return acc + product.price * product.quantity;
         }, 0);
@@ -94,7 +86,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
             throw new Error('Order was not created');
         }
 
-        // Actualizar el documento de tables el campo de occupied a true
         const tablesCollection = dbInstance.collection('tables');
         const tableId = new ObjectId(orderData.tableId);
         await tablesCollection.updateOne(
@@ -117,11 +108,6 @@ export const createOrderRepository = async (orderData: CreateOrderDTO): Promise<
         } as unknown as OrderResponseDTO;
     }
 }
-
-
-
-
-
 
 export const getOrderRepository = async (companyId: string): Promise<OrderResponseDTO[]> => {
     const dbInstance: Db | null = await db;
@@ -183,14 +169,11 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
     ).toArray();
 
     return resultsOrders.map(order => {
-        // Agrupar productos por productId y sumar cantidad y precio
         const groupedProducts = order.products.reduce((acc: any, product: any) => {
             const existingProduct = acc.find((p: any) => p.productId.toString() === product.productId.toString());
             if (existingProduct) {
-                // Si ya existe el producto, sumar la cantidad
                 existingProduct.quantity += product.quantity;
             } else {
-                // Si no existe, agregarlo al acumulador
                 const productDetails = order.productos.find((p: any) => p._id.toString() === product.productId.toString());
                 acc.push({
                     ...product,
@@ -202,51 +185,26 @@ export const getOrderRepository = async (companyId: string): Promise<OrderRespon
             return acc;
         }, []);
 
-        // Calcular el total de la orden sumando los precios de los productos agrupados
         const totalPrice = groupedProducts.reduce((sum: number, product: any) => {
             return sum + (product.price * product.quantity);
         }, 0);
 
         return {
-            id: order._id.toString(), // Convertir ObjectId a string
+            id: order._id.toString(),
             company: order.company,
             userId: order.userId,
             tableId: order.tableId,
             status: order.status,
-            total: totalPrice, // Usar el total calculado
+            total: totalPrice,
             createdAt: order.createdAt,
             updatedAt: order.updatedAt,
             eliminatedAt: order.eliminatedAt,
-            products: groupedProducts, // Usar los productos agrupados
+            products: groupedProducts,
             table: order.table,
             userName: order.user[0] ? order.user[0].name : 'Unknown',
         } as OrderResponseDTO;
     });
 }
-
-
-
-
-
-// return (await resultsOrders).map(order => {
-//     return {
-//         id: order._id,
-//         company: order.company,
-//         userId: order.userId,
-//         tableId: order.tableId,
-//         status: order.status,
-//         total: order.total,
-//         createdAt: order.createdAt,
-//         updatedAt: order.updatedAt,
-//         eliminatedAt: order.eliminatedAt,
-//         products: order.products,
-//         quantity: order.products.quantity,
-//         table: order.table,
-//         user: order.user,
-//         price: order.price || 0
-//     } as OrderResponseDTO;
-// });
-
 
 export const getOneOrderRepository = async (companyId: string, orderId: string): Promise<OrderResponseDTO> => {
     const dbInstance: Db | null = await db;
@@ -310,95 +268,35 @@ export const getOneOrderRepository = async (companyId: string, orderId: string):
 
     const order = resultOrder[0];
 
-    // Agrupar productos por productId y sumar cantidad y precio
     const groupedProducts = order.products.reduce((acc: any, product: any) => {
         const existingProduct = acc.find((p: any) => p.productId.toString() === product.productId.toString());
         if (existingProduct) {
-            // Si ya existe el producto, sumar la cantidad y el precio
             existingProduct.quantity += product.quantity;
-            // existingProduct.price += product.price;
         } else {
-            // Si no existe, agregarlo al acumulador
             acc.push({ ...product });
         }
         return acc;
     }, []);
 
-    // Calcular el total de la orden sumando los precios de los productos agrupados
     const totalPrice = groupedProducts.reduce((sum: number, product: any) => {
         return sum + (product.price * product.quantity);
     }, 0);
 
     return {
-        id: order._id.toString(), // Convertir ObjectId a string
+        id: order._id.toString(),
         company: order.company,
         userId: order.userId,
         tableId: order.tableId,
         status: order.status,
-        total: totalPrice, // Usar el total calculado
-        // total: order.total,
+        total: totalPrice,
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
         eliminatedAt: order.eliminatedAt,
-        products: groupedProducts, // Usar los productos agrupados
+        products: groupedProducts,
         table: order.table,
         user: order.user,
     } as OrderResponseDTO;
 };
-
-
-
-// import { ObjectId } from "mongodb";
-
-// export const updateOrderRepository = async (
-//     companyId: string,
-//     orderId: string,
-//     updatedData: Partial<OrderUpdate>
-// ): Promise<OrderResponseDTO> => {
-
-//     const dbInstance: Db | null = await db;
-//     if (!dbInstance) {
-//         throw new Error('Database instance is null');
-//     }
-
-//     const collection = dbInstance.collection<OrderUpdate>('orders');
-
-//     const resultOrder = await collection.findOneAndUpdate(
-//         {
-//             _id: new ObjectId(orderId),
-//             company: companyId
-//         },
-//         {
-//             $set: {
-//                 ...updatedData,
-//                 updatedAt: new Date(),
-//                 userId: new ObjectId(updatedData.userId),
-//                 tableId: new ObjectId(updatedData.tableId),
-//                 products: updatedData.products?.map(product => {
-//                     return {
-//                         productId: new ObjectId(product.productId),
-//                         quantity: product.quantity,
-//                         // price: product.price
-//                     }
-//                 }
-//                 )
-//             }
-//         },
-//     );
-
-//     if (!resultOrder) {
-//         throw new Error('Order not found');
-//     }
-
-//     console.log('resultOrder', resultOrder);
-
-
-
-//     return {} as OrderResponseDTO;
-// }
-
-
-
 
 export const updateOrderRepository = async (
     companyId: string,
@@ -411,7 +309,6 @@ export const updateOrderRepository = async (
         throw new Error('Database instance is null');
     }
 
-    // Verificar que cada producto exista en la base de datos
     const productsCollection = dbInstance.collection<Products>('products');
     for (const product of updatedData.products || []) {
         const productId = new ObjectId(product.productId);
@@ -420,8 +317,6 @@ export const updateOrderRepository = async (
             throw new Error(`Product with ID ${product.productId} does not exist`);
         }
     }
-
-    // Continuar con la lógica original para actualizar la orden
 
     const collection = dbInstance.collection<Order>('orders');
     const resultOrder = await collection.findOneAndUpdate(
@@ -438,7 +333,7 @@ export const updateOrderRepository = async (
                 products: updatedData.products?.map(product => ({
                     productId: new ObjectId(product.productId),
                     quantity: product.quantity,
-                    price: product.price || 0 // Asegurar que price no sea undefined
+                    price: product.price || 0
                 }))
             }
         },
@@ -448,21 +343,16 @@ export const updateOrderRepository = async (
         throw new Error('Order not found');
     }
 
-    // Calcular el total solo si hay productos
     let total = 0;
     if (updatedData.products) {
         total = updatedData.products.reduce((acc, product) => {
-            // Asegurar que price no sea undefined al calcular el total
             return acc + (product.price || 0) * product.quantity;
         }, 0);
     }
 
-    // Actualizar el total en la base de datos si es necesario
-    // Esta parte del código asume que quieres actualizar el total en la base de datos
-    // Si no es necesario, puedes omitir esta parte o ajustarla según tus necesidades
     if (total > 0) {
         await collection.updateOne({ _id: new ObjectId(orderId) }, { $set: { total: total } });
     }
 
-    return {} as OrderResponseDTO; // Asegúrate de devolver el DTO actualizado correctamente
+    return {} as OrderResponseDTO;
 }
