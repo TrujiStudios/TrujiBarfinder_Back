@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Unauthorized } from '../../utils/errors/errors';
 import errorResponse from '../../utils/errors/responseError';
 import { PermissionDTO } from '../../models/dtos/role/roleDTO';
-import { accessModuleService, createPermissionService, createRoleService, getRoleService } from '../../services/role/roleService';
+import { accessModuleService, createPermissionService, createRoleService, getRoleService, updateRoleService } from '../../services/role/roleService';
 import { ReleResponse } from '../../models/interfaces/role/roleInteface';
 
 
@@ -56,5 +56,18 @@ export const accessModuleController = async (_req: Request, res: Response): Prom
     } catch (error: unknown) {
         return errorResponse(res, error as Error
         );
+    }
+}
+
+//updateRole
+export const updateRoleController = async (_req: Request, res: Response): Promise<Response> => {
+    const role: ReleResponse = _req.body;
+    const roleId = _req.params.roleId;
+    try {
+        if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
+        const resultRole = await updateRoleService(roleId, role);
+        return res.status(201).json(resultRole);
+    } catch (error: unknown) {
+        return errorResponse(res, error as Error);
     }
 }
