@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 
-
 export interface CreateUserDTO {
     id?: string;
     name: string;
@@ -14,6 +13,15 @@ export interface CreateUserDTO {
     status: boolean;
 }
 
+export interface UserRoleDTO {
+    _id: string;
+    name: string;
+    type: string;
+    permissions: any[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface UserResponseDTO {
     id: string;
     _id: string;
@@ -24,11 +32,9 @@ export interface UserResponseDTO {
     email: string;
     password: string;
     phone: string;
-    role: ObjectId;
-    // companyId: string;
+    role: UserRoleDTO;
     company?: string;
     status: boolean;
     createdAt: Date;
     updatedAt: Date;
-    // eliminatedAt: Date;
 }
