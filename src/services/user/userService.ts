@@ -1,6 +1,6 @@
 import { CreateUserDTO, UserResponseDTO } from "../../models/dtos/user/userDTO";
 import { byEmailUserRepository } from "../../repositories/companyRepositories";
-import { createUserRepository } from "../../repositories/userRepository";
+import { createUserRepository, findUserByRepository } from "../../repositories/userRepository";
 import { encrypt } from "../../utils/encrypt";
 import { Unauthorized } from "../../utils/errors/errors";
 
@@ -32,6 +32,16 @@ export const findUserByEmailService = async (email: string) => {
 
     return user;
 };
+
+//get user
+export const findUserByService = async (companyId: string): Promise<UserResponseDTO[]> => {
+    try {
+        const user = await findUserByRepository(companyId);
+        return user;
+    } catch (error: unknown) {
+        throw new Error('Error getting user: ' + (error as Error).message);
+    }
+}
 
 
 

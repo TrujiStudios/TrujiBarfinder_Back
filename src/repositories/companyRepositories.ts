@@ -1,12 +1,9 @@
-
 import { Db } from 'mongodb';
 import db from '../config/database';
 import { ICompany } from '../models/interfaces/auth/authInterface';
 import { CompanyResponseDTO } from '../models/dtos/company/companyDTO';
-import { ObjectId } from 'mongodb'; // Add this import
+import { ObjectId } from 'mongodb';
 import { UserResponseDTO } from '../models/dtos/user/userDTO';
-// import { CompanyResponseLoginDTO } from '../dtos/companyDTO';
-
 
 export const findCompanyByEmailRepository = async (email: string): Promise<boolean> => {
     const dbInstance: Db | null = await db;
@@ -17,7 +14,6 @@ export const findCompanyByEmailRepository = async (email: string): Promise<boole
     const company = await collection.findOne({ email });
     return !!company;
 };
-
 
 export const byEmailcompanyRepository = async (email: string): Promise<CompanyResponseDTO | null> => {
     const dbInstance: Db | null = await db;
@@ -49,14 +45,13 @@ export const byEmailUserRepository = async (email: string): Promise<UserResponse
     return user;
 };
 
-
 export const findCompanyByIdRepository = async (companyId: string): Promise<CompanyResponseDTO | null> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
     const collection = dbInstance.collection<ICompany>('company');
-    const company = await collection.findOne({ _id: new ObjectId(companyId) }); // Convert companyId to ObjectId
+    const company = await collection.findOne({ _id: new ObjectId(companyId) });
 
     if (!company) {
         throw new Error('Company does not exist');
@@ -76,9 +71,6 @@ export const findCompanyByIdRepository = async (companyId: string): Promise<Comp
     };
 }
 
-// buscar compañia por email 
-
-
 export const findCompanyByEmailRepositoryFixed = async (email: string): Promise<CompanyResponseDTO | null> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
@@ -88,7 +80,6 @@ export const findCompanyByEmailRepositoryFixed = async (email: string): Promise<
     const results = await collection.aggregate([
         {
             $match: {
-                // _id: new ObjectId(company),
                 email: email
             }
         },
@@ -121,7 +112,3 @@ export const findCompanyByEmailRepositoryFixed = async (email: string): Promise<
         updatedAt: results[0].updatedAt
     };
 }
-
-
-
-

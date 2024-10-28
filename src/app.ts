@@ -26,29 +26,16 @@ app.use(session({
     cookie: {
         secure: false,
         httpOnly: false,
-        // expires: new Date(Date.now() + 1000 * 60 * 60), // 1 hora
-        // maxAge: 5000,
         maxAge: 1000 * 60 * 60, // 1 hora
-
-    }  //esto debería ser true en producción y false en desarrollo para que funcione con http://localhost:5173
+    }
 }));
-
-// declare module 'express-session' {
-//     interface SessionData {
-//         user: string;
-//     }
-// }
 
 app.use('/api/v1', routes);
 
-
-
 app.get('/', (_req: Request, _res: Response) => {
-    // _req.session.visitas = _req.session.visitas ? _req.session.visitas + 1 : 1;
     console.log('session app', _req.session);
 });
 
 app.use(errorHandler);
-
 
 export default app;
