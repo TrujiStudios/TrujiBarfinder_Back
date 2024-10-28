@@ -29,6 +29,16 @@ export interface ReleResponse {
     description: string;
 }
 
+export interface RolResponse {
+    _id: string;
+    name: string;
+    active: boolean;
+    type: string;
+    authorization: Authorization;
+    accessTo: AccessTo[];
+    description: string;
+}
+
 export interface AccessTo {
     path: string;
     title: string;

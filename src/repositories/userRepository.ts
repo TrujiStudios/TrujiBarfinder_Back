@@ -8,11 +8,11 @@ export const createUserRepository = async (userData: CreateUserDTO): Promise<Use
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
-
+    const { _id, ...userWithoutId } = userData;
     const collection = dbInstance.collection<User>('users');
     const resultUser = await collection.insertOne({
-        ...userData,
-        roleId: new ObjectId(userData.roleId),
+        ...userWithoutId,
+        roleId: new ObjectId(userData.role),
         status: true,
         createdAt: new Date(),
         updatedAt: new Date(),

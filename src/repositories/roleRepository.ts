@@ -1,7 +1,7 @@
 import db from "../config/database";
 import { Db, ObjectId } from 'mongodb';
 import { PermissionDTO, RoleResponseDTO } from "../models/dtos/role/roleDTO";
-import { Permission, ReleResponse } from "../models/interfaces/role/roleInteface";
+import { Permission, ReleResponse, RolResponse } from "../models/interfaces/role/roleInteface";
 
 export const createPlantillaRolUserRepository = async (companyId: any): Promise<void> => {
     const dbInstance: Db | null = await db;
@@ -278,13 +278,13 @@ export const updateRoleRepository = async (roleId: string, roleData: ReleRespons
 
 export const getRoleRepository = async (
     companyId: string,
-): Promise<ReleResponse[]> => {
+): Promise<RolResponse[]> => {
     const dbInstance: Db | null = await db;
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
 
-    const roleResult = await dbInstance.collection<ReleResponse>('roles').aggregate(
+    const roleResult = await dbInstance.collection<RolResponse>('roles').aggregate(
         [
             {
                 $match: {
@@ -293,6 +293,7 @@ export const getRoleRepository = async (
             },
             {
                 $project: {
+                    _id: 1,
                     name: 1,
                     active: 1,
                     type: 1,
@@ -304,7 +305,8 @@ export const getRoleRepository = async (
         ]
     ).toArray();
 
-    return roleResult.map((role): ReleResponse => ({
+    return roleResult.map((role): RolResponse => ({
+        _id: role._id.toString(),
         name: role.name,
         active: role.active,
         type: role.type,
@@ -340,8 +342,8 @@ export const createPermissionRepository = async (roleData: PermissionDTO): Promi
     return {
         _id: resultRole.insertedId.toString(),
         name: roleData.name,
-        company: "", 
-        permissions: [], 
+        company: "",
+        permissions: [],
         createdAt: new Date(),
         updatedAt: new Date()
     };
@@ -540,7 +542,7 @@ export const accessModuleejemplo = async (company: string, userId?: string, modu
             _id: permission._id.toString(),
             name: permission.name,
             type: permission.type,
-            authorization: module ? permission.authorization[module] || null : null  
+            authorization: module ? permission.authorization[module] || null : null
         }))
     }))[0];
 };

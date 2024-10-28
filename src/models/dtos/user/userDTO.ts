@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 
 export interface CreateUserDTO {
     id?: string;
+    _id?: string;
     name: string;
     lastName: string;
     documentType: string;
@@ -10,6 +11,7 @@ export interface CreateUserDTO {
     password: string;
     phone: string;
     roleId: ObjectId;
+    role?: ObjectId;
     status: boolean;
 }
 
