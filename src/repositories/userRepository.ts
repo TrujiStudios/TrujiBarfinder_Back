@@ -27,7 +27,7 @@ export const createUserRepository = async (userData: CreateUserDTO): Promise<Use
         _id: resultUser.insertedId.toString(),
         ...userData,
         role: {
-            _id: userData.roleId.toString(),
+            _id: userData.role ? userData.role.toString() : '',
             name: '', // Placeholder, should be populated from the role collection
             type: '', // Placeholder, should be populated from the role collection
             permissions: [],
