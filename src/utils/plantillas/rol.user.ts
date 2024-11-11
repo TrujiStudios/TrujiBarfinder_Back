@@ -52,7 +52,33 @@ const plantillaRolUser: PlantillaRolUser = {
             }
         }
     },
-    accessTo: []
+    accessTo: [
+        {
+            "path": "/configurations",
+            "title": "configuracion",
+            "icon": "calendar_today",
+            "class": ""
+        },
+        {
+            "path": "/users",
+            "title": "usuarios",
+            "icon": "people",
+            "class": ""
+        },
+        {
+            "path": "/roles",
+            "title": "roles",
+            "icon": "people",
+            "class": ""
+        },
+        {
+            "path": "/tables",
+            "title": "tablas",
+            "icon": "people",
+            "class": ""
+        }
+
+    ]
 }
 
 export default plantillaRolUser;
