@@ -29,14 +29,17 @@ export interface UserResponseDTO {
     _id: string;
     name: string;
     lastName: string;
+    companyName?: string;
     documentType: string;
     typePerson: string;
     email: string;
     password: string;
     phone: string;
     role: UserRoleDTO;
+    // roleId?: string;
     company?: string;
+    companyId?: string;
     status: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

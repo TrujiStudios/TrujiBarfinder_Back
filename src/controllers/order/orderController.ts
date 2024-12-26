@@ -26,7 +26,7 @@ export const getOrderController = async (_req: Request, res: Response): Promise<
         if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
 
         if (sessionUser) {
-            const userId = sessionUser._id;
+            const userId = sessionUser.id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'order';
             const accessResponse = await accessModuleService(companyId, userId, module);

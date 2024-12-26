@@ -23,7 +23,7 @@ export const getAllTablesController = async (_req: Request, res: Response): Prom
         if (!_req.session.isAutehnticated) throw new Unauthorized('Session not active');
         const companyId: string = _req.body.company;
         if (sessionUser) {
-            const userId = sessionUser._id;
+            const userId = sessionUser.id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'table';
             const accessResponse = await accessModuleService(companyId, userId, module);

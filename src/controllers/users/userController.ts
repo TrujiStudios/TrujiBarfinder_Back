@@ -15,7 +15,7 @@ export const createUserController = async (_req: Request, res: Response): Promis
         if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
 
         if (sessionUser) {
-            const userId = sessionUser._id;
+            const userId = sessionUser.id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'users';
             const accessResponse = await accessModuleService(companyId, userId, module);
@@ -49,7 +49,7 @@ export const findUserByController = async (_req: Request, res: Response): Promis
         if (!_req.session?.isAutehnticated) throw new Unauthorized('Session not active');
 
         if (sessionUser) {
-            const userId = sessionUser._id;
+            const userId = sessionUser.id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'users';
             const accessResponse = await accessModuleService(companyId, userId, module);

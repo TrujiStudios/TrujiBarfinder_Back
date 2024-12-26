@@ -106,16 +106,27 @@ export const authLoginUserServices = async (userData: Payload): Promise<{ user: 
 
         await comparePassword(userData.password, existingUser.password);
 
-        const token = await createToken({ sub: existingUser.company } as unknown as Payload);
-        console.log('token', token);
-        return {
-            user: existingUser,
-            token
-        };
+        if (!existingUser.company || existingUser.company.length === 0) {
+            throw new Error('Company data is missing');
+        }
+
+        const company = typeof existingUser.company[0] === 'string' ? { _id: existingUser.company[0] } : existingUser.company[0];
+        if (typeof company === 'object' && '_id' in company) {
+            const token = await createToken({ sub: company._id, userName: existingUser.name } as unknown as Payload);
+            console.log('token', token);
+
+            return {
+                user: existingUser,
+                token
+            };
+        } else {
+            throw new Error('Invalid company data');
+        }
     } catch (error) {
         throw new Error('Error logging in user: ' + (error as Error).message);
     }
 };
+
 
 
 

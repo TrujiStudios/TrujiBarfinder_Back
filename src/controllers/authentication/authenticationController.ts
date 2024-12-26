@@ -80,8 +80,14 @@ export const authLoginController = async (_req: Request, res: Response): Promise
             _req.session.isAutehnticated = true;
             _req.session.visitas = _req.session.visitas ? _req.session.visitas + 1 : 1;
             _req.session.save();
+            console.log('COMPANY', _req.session.company);
 
             return res.cookie('TrujiStudios', token, {
+                httpOnly: false,
+                maxAge: 1000 * 60 * 60, // 1 hora
+                secure: true,
+                sameSite: 'lax'
+            }).cookie('companyData', JSON.stringify(company), {
                 httpOnly: false,
                 maxAge: 1000 * 60 * 60, // 1 hora
                 secure: true,
@@ -89,6 +95,7 @@ export const authLoginController = async (_req: Request, res: Response): Promise
             }).status(200).json({
                 message: 'Negocio logueado exitosamente',
                 company: true,
+                session: _req.session.company
             });
         } catch (companyError) {
             try {
@@ -99,8 +106,15 @@ export const authLoginController = async (_req: Request, res: Response): Promise
                 _req.session.isAutehnticated = true;
                 _req.session.visitas = _req.session.visitas ? _req.session.visitas + 1 : 1;
                 _req.session.save();
+                console.log('USER', _req.session.user);
+                // console.log('USERrr', user);
 
                 return res.cookie('TrujiStudios', token, {
+                    httpOnly: false,
+                    maxAge: 1000 * 60 * 60, // 1 hora
+                    secure: true,
+                    sameSite: 'lax'
+                }).cookie('userData', JSON.stringify(user), {
                     httpOnly: false,
                     maxAge: 1000 * 60 * 60, // 1 hora
                     secure: true,
@@ -108,6 +122,7 @@ export const authLoginController = async (_req: Request, res: Response): Promise
                 }).status(200).json({
                     message: 'Usuario logueado exitosamente',
                     user: true,
+                    session: _req.session.user
                 });
             } catch (userError) {
                 return res.status(400).json({ message: 'Error de autenticación: Email o contraseña inválidos' });

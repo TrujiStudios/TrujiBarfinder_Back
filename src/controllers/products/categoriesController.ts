@@ -25,7 +25,7 @@ export const getCategoriesController = async (_req: Request, res: Response): Pro
         if (!_req.session.isAutehnticated) throw new Error('Session not active');
         console.log("Session de Categoria");
         if (sessionUser) {
-            const userId = sessionUser._id;
+            const userId = sessionUser.id;
             if (typeof userId !== 'string') throw new BadRequest('Invalid user ID');
             const module = 'category';
             const accessResponse = await accessModuleService(companyId, userId, module);

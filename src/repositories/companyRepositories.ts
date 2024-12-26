@@ -35,14 +35,71 @@ export const byEmailUserRepository = async (email: string): Promise<UserResponse
     if (!dbInstance) {
         throw new Error('Database instance is null');
     }
+    // necesitoque cuando consulte por el email de usuario me traiga el name de la conpany ala que pertenece
     const collection = dbInstance.collection<any>('users');
-    const user = await collection.findOne({ email });
+    const user = await collection.aggregate(
+        [
+            {
+                $match: {
+                    email: email
+                }
+            },
+            {
+                $lookup: {
+                    from: "company",
+                    localField: "company",
+                    foreignField: "_id",
+                    as: "companyDetails"
+                }
+            },
+            {
+                $lookup: {
+                    from: "roles",
+                    localField: "roleId",
+                    foreignField: "_id",
+                    as: "roleDetails"
+                }
+            },
+            {
+                $project:
+                {
+                    _id: 1,
+                    name: 1,
+                    lastName: 1,
+                    email: 1,
+                    password: 1,
+                    phone: 1,
+                    status: 1,
+                    roleId: 1,
+                    companyId: 1,
+                    company: "$companyDetails",
+                    role: 1,
+                }
+            }
+        ]
+    ).toArray();
 
-    if (!user) {
+    if (!user || user.length === 0) {
         throw new Error('User does not exist');
     }
 
-    return user;
+    const userResponse: UserResponseDTO = {
+        id: user[0]._id.toString(),
+        name: user[0].name,
+        lastName: user[0].lastName,
+        email: user[0].email,
+        password: user[0].password,
+        phone: user[0].phone,
+        status: user[0].status,
+        // roleId: user[0].roleId,
+        company: user[0].company,
+        companyId: user[0].companId,
+        role: user[0].role,
+        _id: '',
+        documentType: '',
+        typePerson: '',
+    };
+    return userResponse;
 };
 
 export const findCompanyByIdRepository = async (companyId: string): Promise<CompanyResponseDTO | null> => {
